@@ -183,7 +183,7 @@ public class Main {
 
         SetFilePath(encryptionFunction);
 
-        encryptionFunction.PreformFunction();
+        encryptionFunction.RunFunction();
 
         pauseProg();
     }

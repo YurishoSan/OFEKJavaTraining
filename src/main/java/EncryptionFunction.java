@@ -68,5 +68,16 @@ public abstract class EncryptionFunction {
         filePath = value;
     }
 
-    public abstract void PreformFunction();
+    public void RunFunction() {
+        Runnable function = new Runnable() {
+
+            public void run() {
+                PreformFunction();
+            }
+        };
+
+        function.run();
+    }
+
+    protected abstract void PreformFunction();
 }

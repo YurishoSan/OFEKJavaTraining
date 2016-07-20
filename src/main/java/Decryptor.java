@@ -33,7 +33,7 @@ public class Decryptor extends EncryptionFunction{
      * @since 1.1
      * @see #Decrypt()
      */
-    public void PreformFunction() {
+    protected void PreformFunction() {
         Decrypt();
     }
 
@@ -42,7 +42,7 @@ public class Decryptor extends EncryptionFunction{
      * prints that the file is being decrypted.
      * @since 1.0
      */
-    public void Decrypt() {
+    private void Decrypt() {
         /*
         Encrypt pseudo code
             print("decryption simulation of file " + filePath)

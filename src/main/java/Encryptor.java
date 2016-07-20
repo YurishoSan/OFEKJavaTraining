@@ -32,7 +32,7 @@ public class Encryptor extends EncryptionFunction{
      * @since 1.1
      * @see #Encrypt()
      */
-    public void PreformFunction() {
+    protected void PreformFunction() {
         Encrypt();
     }
 
@@ -41,7 +41,7 @@ public class Encryptor extends EncryptionFunction{
      * prints that the file is being encrypted.
      * @since 1.0
      */
-    public void Encrypt() {
+    private void Encrypt() {
         /*
         Encrypt pseudo code
             print("encryption simulation of file " + filePath")
