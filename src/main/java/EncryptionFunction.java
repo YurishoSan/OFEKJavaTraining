@@ -6,18 +6,31 @@ import java.io.File;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
-public class EncryptionFunction {
+public abstract class EncryptionFunction {
     // Attributes ------------------------------------------------------------------------------------------------------
     /**
      * path of file to preform function
+     * @since 1.1
      */
     String filePath;
 
     // Contors ---------------------------------------------------------------------------------------------------------
+
+    /**
+     * default contor
+     * filePath defaults to empty string
+     *
+     * @since 1.1
+     */
+    public EncryptionFunction() {
+        filePath = "";
+    }
+
     /**
      * contor
+     * @since 1.0
      * @param filePath path of file to preform function
      */
     public EncryptionFunction(String filePath) {
@@ -28,6 +41,7 @@ public class EncryptionFunction {
 
     /**
      * get the file path
+     * @since 1.0
      * @return the file path
      */
     public String GetFilePath() {
@@ -37,6 +51,7 @@ public class EncryptionFunction {
     /**
      * validates the value is a valid path, and that it is not a directory and that it exists, and sets filePath to value.
      * if validation fails the function returns without doing anything.
+     * @since 1.0
      * @param value
      */
     public void SetFilePath(String value) {
@@ -47,9 +62,11 @@ public class EncryptionFunction {
 
             filePath = value
          */
-        File file = new File(filePath);
+        File file = new File(value);
         if (!FileUtils.isFilenameValid(value) || !file.exists() || file.isDirectory())
             return;
         filePath = value;
     }
+
+    public abstract void PreformFunction();
 }

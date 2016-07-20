@@ -1,4 +1,3 @@
-import java.io.File;
 import java.util.Scanner;
 
 /**
@@ -7,13 +6,14 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
 
     /**
      * Enum of choices a user can make in the selection menu
+     * @since 1.0
      */
         private enum ChoiceEnum {
         ENCRYPT,    //encrypt the file
@@ -23,6 +23,7 @@ public class Main {
 
     /**
      * Prints the credits for the project
+     * @since 1.0
      */
     private static void PrintCredits() {
         /*
@@ -43,6 +44,7 @@ public class Main {
      *
      * If an unrecognized action is requested, the user will be requested to choose again.
      *
+     * @since 1.0
      * @return User's chosen action from the menu
      */
     public static ChoiceEnum SelectionMenu() {
@@ -85,31 +87,25 @@ public class Main {
     }
 
     /**
-     * Gets the path of the file to encrypt/decrypt
+     * Sets the path of the file to encrypt/decrypt
      *
      * If the file name is illegal or no file exists the user will be requested to input the file name again
      *
-     * @return path of file to encrypt/decrypt
+     * @since 1.1
      */
-    public static String GetFilePath() {
+    public static void SetFilePath(EncryptionFunction encryptionFunction) {
         /*
         GetFilePath pseudo code
             do
                 print ("Enter File Path:")
                 filePath <- input()
 
-                if (filePath is illegal path)
-                    error <- "Illegal file path"
+                encryptionFunction.SetFilePath(filePath)
 
-                elseif (file at filePath does not exist or is directory)
-                    error <- "file at path does not exist or is a directory"
-
-                if (error != "")
-                    print (error)
+                if (encryptionFunction.GetFilePath() == "")
+                    print ("Illegal file path or file at path does not exist or is a directory")
                     print ("Please Try again.")
-                    filePath <- ""
-
-            while (filePath == "")
+            while (encryptionFunction.GetFilePath() == "")
 
             return filePath
          */
@@ -120,36 +116,24 @@ public class Main {
         Scanner reader = new Scanner(System.in); // input reader
 
         do {
-            File file;
-
             System.out.println("Enter File Path:");
             filePath = reader.nextLine();
-            file = new File(filePath);
 
-            //check if filePath is an illegal path
-            if (!FileUtils.isFilenameValid(filePath))
-                error = "Illegal file path";
+            encryptionFunction.SetFilePath(filePath);
 
-
-            //check if file doesn't exist or is a directory
-            else if (!file.exists() || file.isDirectory())
-                error = "file at path does not exist or is a directory";
-
-            if (error != "") {
-                System.out.println(error);
+            if (encryptionFunction.GetFilePath().equals("")) { //error
+                System.out.println("Illegal file path or file at path does not exist or is a directory");
                 System.out.println("Please Try again.");
-                filePath = "";
-                error = "";
             }
-        } while (filePath == "");
-
-        return filePath;
+        } while (encryptionFunction.GetFilePath().equals(""));
     }
 
     /**
      * Pause execution until ENTER is pressed
      *
      * see: http://codewithdesign.com/2010/01/17/create-a-press-enter-to-continue-with-java/
+     *
+     * @since 1.0
      */
     public static void pauseProg(){
         System.out.println("Press enter to continue...");
@@ -166,36 +150,40 @@ public class Main {
 
             choice <- SelectionMenu()
 
-            filePath <- GetFilePath()
-
             switch (choice)
                 case ENCRYPT:
-                    encryptor <- new Encryptor(filePath)
-                    encryptor.Encrypt()
+                    encryptionFunction <- new Encryptor()
                 break
                 case DECRYPT:
-                    decryptor <- new Decryptor(filePath)
-                    decryptor.Decrypt()
+                    encryptionFunction <- new Decryptor()
                 break
+
+            filePath <- GetFilePath(encryptionFunction)
+
+            encryptionFunction.preformFunction();
         */
 
+        EncryptionFunction encryptionFunction; // object for encryption function to preform
         PrintCredits();
 
         ChoiceEnum choice = SelectionMenu();
-        String filePath = GetFilePath();
 
         switch (choice) {
             case ENCRYPT:
-                Encryptor encryptor = new Encryptor(filePath);
-                encryptor.Encrypt();
+                encryptionFunction = new Encryptor();
                 break;
             case DECRYPT:
-                Decryptor decryptor = new Decryptor(filePath);
-                decryptor.Decrypt();
+                encryptionFunction = new Decryptor();
                 break;
             default:
                 System.out.println("unsupported choice");
+                pauseProg();
+                return;
         }
+
+        SetFilePath(encryptionFunction);
+
+        encryptionFunction.PreformFunction();
 
         pauseProg();
     }

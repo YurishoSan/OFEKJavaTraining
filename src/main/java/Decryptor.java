@@ -4,13 +4,22 @@
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.1
+ * @version 1.2
  */
 public class Decryptor extends EncryptionFunction{
 
     // Contors ---------------------------------------------------------------------------------------------------------
+
+    /**
+     * default contor
+     */
+    public Decryptor() {
+        super();
+    }
+
     /**
      * contor
+     * @since 1.0
      * @param filePath path of file to decrypt
      */
     public Decryptor(String filePath) {
@@ -20,8 +29,18 @@ public class Decryptor extends EncryptionFunction{
     // Methods ---------------------------------------------------------------------------------------------------------
 
     /**
+     * call Decrypt
+     * @since 1.1
+     * @see #Decrypt()
+     */
+    public void PreformFunction() {
+        Decrypt();
+    }
+
+    /**
      * mock decryption of file.
      * prints that the file is being decrypted.
+     * @since 1.0
      */
     public void Decrypt() {
         /*
