@@ -4,16 +4,9 @@
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
-
-public class Decryptor {
-
-    // Attributes ------------------------------------------------------------------------------------------------------
-    /**
-     * path of file to decrypt
-     */
-    String filePath;
+public class Decryptor extends EncryptionFunction{
 
     // Contors ---------------------------------------------------------------------------------------------------------
     /**
@@ -21,17 +14,7 @@ public class Decryptor {
      * @param filePath path of file to decrypt
      */
     public Decryptor(String filePath) {
-        SetFilePath(filePath);
-    }
-
-    // Getters/Setters -------------------------------------------------------------------------------------------------
-
-    public String GetFilePath() {
-        return filePath;
-    }
-
-    public void SetFilePath(String value) {
-        filePath = value;
+        super(filePath);
     }
 
     // Methods ---------------------------------------------------------------------------------------------------------

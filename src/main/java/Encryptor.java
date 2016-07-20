@@ -4,15 +4,9 @@
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
-public class Encryptor {
-
-    // Attributes ------------------------------------------------------------------------------------------------------
-    /**
-     * path of file to decrypt
-     */
-    String filePath;
+public class Encryptor extends EncryptionFunction{
 
     // Contors ---------------------------------------------------------------------------------------------------------
     /**
@@ -20,22 +14,10 @@ public class Encryptor {
      * @param filePath path of file to encrypt
      */
     public Encryptor(String filePath) {
-        SetFilePath(filePath);
-    }
-
-    // Getters/Setters -------------------------------------------------------------------------------------------------
-
-    public String GetFilePath() {
-        return filePath;
-    }
-
-    public void SetFilePath(String value) {
-        filePath = value;
+        super(filePath);
     }
 
     // Methods ---------------------------------------------------------------------------------------------------------
-
-
 
     /**
      * mock encryption of file.
