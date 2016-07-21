@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.2
+ * @version 1.3
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -119,13 +119,13 @@ public class Main {
             System.out.println("Enter File Path:");
             filePath = reader.nextLine();
 
-            encryptionFunction.SetFilePath(filePath);
+            encryptionFunction.setFilePath(filePath);
 
-            if (encryptionFunction.GetFilePath().equals("")) { //error
+            if (encryptionFunction.getFilePath().equals("")) { //error
                 System.out.println("Illegal file path or file at path does not exist or is a directory");
                 System.out.println("Please Try again.");
             }
-        } while (encryptionFunction.GetFilePath().equals(""));
+        } while (encryptionFunction.getFilePath().equals(""));
     }
 
     /**

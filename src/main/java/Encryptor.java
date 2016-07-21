@@ -1,12 +1,14 @@
+import lombok.*;
+
 /**
  * Created by yurisho on 20/07/2016.
  *
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.2
+ * @version 1.3
  */
-public class Encryptor extends EncryptionFunction{
+@Data public class Encryptor extends EncryptionFunction{
 
     // Contors ---------------------------------------------------------------------------------------------------------
     /**

@@ -1,4 +1,5 @@
 import java.io.File;
+import lombok.*;
 
 /**
  * Created by yurisho on 20/07/2016.
@@ -6,9 +7,9 @@ import java.io.File;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 1.2
+ * @version 1.3
  */
-public abstract class EncryptionFunction implements Runnable{
+@Data public abstract class EncryptionFunction implements Runnable{
     // Attributes ------------------------------------------------------------------------------------------------------
     /**
      * path of file to preform function
@@ -34,27 +35,17 @@ public abstract class EncryptionFunction implements Runnable{
      * @param filePath path of file to preform function
      */
     public EncryptionFunction(String filePath) {
-        SetFilePath(filePath);
+        setFilePath(filePath);
     }
 
     // Getters/Setters -------------------------------------------------------------------------------------------------
-
-    /**
-     * get the file path
-     * @since 1.0
-     * @return the file path
-     */
-    public String GetFilePath() {
-        return filePath;
-    }
-
     /**
      * validates the value is a valid path, and that it is not a directory and that it exists, and sets filePath to value.
      * if validation fails the function returns without doing anything.
      * @since 1.0
      * @param value
      */
-    public void SetFilePath(String value) {
+    public void setFilePath(String value) {
         /*
         SetFilePath pseudo code
             if (value is illegal path or file at value does not exist or is directory)

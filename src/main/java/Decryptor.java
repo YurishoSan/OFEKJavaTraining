@@ -1,15 +1,16 @@
+import lombok.*;
+
 /**
  * Created by yurisho on 20/07/2016.
  *
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.2
+ * @version 1.3
  */
-public class Decryptor extends EncryptionFunction{
+@Data public class Decryptor extends EncryptionFunction{
 
     // Contors ---------------------------------------------------------------------------------------------------------
-
     /**
      * default contor
      */
@@ -17,7 +18,7 @@ public class Decryptor extends EncryptionFunction{
         super();
     }
 
-    /**
+     /**
      * contor
      * @since 1.0
      * @param filePath path of file to decrypt

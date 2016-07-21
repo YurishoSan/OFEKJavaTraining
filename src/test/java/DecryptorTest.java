@@ -49,7 +49,7 @@ public class DecryptorTest {
     @Test
     public void preformFunctionShouldWriteToScreen() {
         decryptor.PreformFunction();
-        assertThat(outContent.toString(), is("decryption simulation of file " + decryptor.GetFilePath() + "\r\n"));
+        assertThat(outContent.toString(), is("decryption simulation of file " + decryptor.getFilePath() + "\r\n"));
     }
 
 }

@@ -38,22 +38,22 @@ public class EncryptionFunctionTest {
     public void setFilePathShouldFail() throws IOException {
         folder.newFolder("myFolder");
 
-        encryptionFunction.SetFilePath(folder.getRoot().getCanonicalPath() + "\\myFolder\\test.T*T"); //non valid file
-        assertThat(encryptionFunction.GetFilePath(), is(""));
+        encryptionFunction.setFilePath(folder.getRoot().getCanonicalPath() + "\\myFolder\\test.T*T"); //non valid file
+        assertThat(encryptionFunction.getFilePath(), is(""));
 
-        encryptionFunction.SetFilePath(folder.getRoot().getCanonicalPath() + "\\myFolder\\notMyFile.txt"); //non existent file
-        assertThat(encryptionFunction.GetFilePath(), is(""));
+        encryptionFunction.setFilePath(folder.getRoot().getCanonicalPath() + "\\myFolder\\notMyFile.txt"); //non existent file
+        assertThat(encryptionFunction.getFilePath(), is(""));
 
-        encryptionFunction.SetFilePath(folder.getRoot().getCanonicalPath() + "\\MyFolder"); //a folder
-        assertThat(encryptionFunction.GetFilePath(), is(""));
+        encryptionFunction.setFilePath(folder.getRoot().getCanonicalPath() + "\\MyFolder"); //a folder
+        assertThat(encryptionFunction.getFilePath(), is(""));
     }
 
     @Test
     public void setFilePathShouldSucceed() throws IOException {
         folder.newFile("myFile.txt");
 
-        encryptionFunction.SetFilePath(folder.getRoot().getCanonicalPath() + "\\myFile.txt");
-        assertThat(encryptionFunction.GetFilePath(), is(folder.getRoot().getCanonicalPath() + "\\myFile.txt"));
+        encryptionFunction.setFilePath(folder.getRoot().getCanonicalPath() + "\\myFile.txt");
+        assertThat(encryptionFunction.getFilePath(), is(folder.getRoot().getCanonicalPath() + "\\myFile.txt"));
     }
 
 }

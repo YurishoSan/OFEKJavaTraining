@@ -49,7 +49,7 @@ public class EncryptorTest {
     @Test
     public void preformFunctionShouldWriteToScreen() {
         encryptor.PreformFunction();
-        assertThat(outContent.toString(), is("encryption simulation of file " + encryptor.GetFilePath() + "\r\n"));
+        assertThat(outContent.toString(), is("encryption simulation of file " + encryptor.getFilePath() + "\r\n"));
     }
 
 }
