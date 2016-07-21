@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.1
+ * @version 1.2
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ public class Main {
 
         SetFilePath(encryptionFunction);
 
-        encryptionFunction.RunFunction();
+        encryptionFunction.run();
 
         pauseProg();
     }

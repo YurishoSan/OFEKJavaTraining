@@ -6,9 +6,9 @@ import java.io.File;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 1.1
+ * @version 1.2
  */
-public abstract class EncryptionFunction {
+public abstract class EncryptionFunction implements Runnable{
     // Attributes ------------------------------------------------------------------------------------------------------
     /**
      * path of file to preform function
@@ -68,15 +68,8 @@ public abstract class EncryptionFunction {
         filePath = value;
     }
 
-    public void RunFunction() {
-        Runnable function = new Runnable() {
-
-            public void run() {
-                PreformFunction();
-            }
-        };
-
-        function.run();
+    public void run() {
+        PreformFunction();
     }
 
     protected abstract void PreformFunction();
