@@ -7,7 +7,7 @@ import lombok.*;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 1.3
+ * @version 2.0
  */
 @Data public abstract class EncryptionFunction implements Runnable{
     // Attributes ------------------------------------------------------------------------------------------------------
@@ -64,4 +64,16 @@ import lombok.*;
     }
 
     protected abstract void PreformFunction();
+
+    /**
+     * Apply Algorithm to original file, and output an output file
+     *
+     * @since 2.0
+     *
+     * @param algorithmType Algorithm to apply
+     * @param originalFile file to use algorithm on
+     * @param outputFile output file
+     * @param key key to use algorithm with
+     */
+    protected abstract void Algorithm(AlgorithmTypeEnum algorithmType, File originalFile, File outputFile, byte key);
 }

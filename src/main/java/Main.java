@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.3
+ * @version 2.0
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ public class Main {
      */
     public static void SetFilePath(EncryptionFunction encryptionFunction) {
         /*
-        GetFilePath pseudo code
+        SetFilePath pseudo code
             do
                 print ("Enter File Path:")
                 filePath <- input()
@@ -104,10 +104,8 @@ public class Main {
 
                 if (encryptionFunction.GetFilePath() == "")
                     print ("Illegal file path or file at path does not exist or is a directory")
-                    print ("Please Try again.")
+                    print ("Please try again.")
             while (encryptionFunction.GetFilePath() == "")
-
-            return filePath
          */
 
         String filePath; //path of file to get from user
@@ -123,9 +121,34 @@ public class Main {
 
             if (encryptionFunction.getFilePath().equals("")) { //error
                 System.out.println("Illegal file path or file at path does not exist or is a directory");
-                System.out.println("Please Try again.");
+                System.out.println("Please try again.");
             }
         } while (encryptionFunction.getFilePath().equals(""));
+    }
+
+    /**
+     * Sets the key for the decryption
+     *
+     * If not a number the user will be requested to input the file name again
+     *
+     * @since 2.0
+     */
+    private static void SetKey(Decryptor decryptor) {
+        /*
+        SetKey pseudo code
+            flag <- false
+            do
+                print ("Enter Key:")
+                key <- input()
+                if (key can be converted to byte)
+                    flag <- true
+                else
+                    print("Key is not a byte")
+                    print("Please try again")
+            while (!flag)
+
+            decryptor.setKet(key as byte)
+         */
     }
 
     /**
@@ -158,7 +181,9 @@ public class Main {
                     encryptionFunction <- new Decryptor()
                 break
 
-            filePath <- GetFilePath(encryptionFunction)
+            SetFilePath(encryptionFunction)
+            if (choice = DECRYPT)
+                SetKey(encryptionFunction as Decryptor)
 
             encryptionFunction.preformFunction();
         */
