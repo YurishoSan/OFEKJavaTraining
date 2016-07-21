@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.*;
@@ -25,6 +26,10 @@ public class EncryptionFunctionTest {
             @Override
             protected void PreformFunction() {
                 return;
+            }
+
+            @Override
+            protected void Algorithm(AlgorithmTypeEnum algorithmType, File original, File output, byte key) {
             }
         };
     }

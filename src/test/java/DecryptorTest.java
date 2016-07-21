@@ -26,7 +26,8 @@ public class DecryptorTest {
     @Before
     public void setUpDecryptor() throws IOException {
         folder.newFile("test.txt");
-        decryptor = new Decryptor(folder.getRoot().getCanonicalPath() + "\\test.txt");
+        byte key = 70;
+        decryptor = new Decryptor(folder.getRoot().getCanonicalPath() + "\\test.txt", key);
     }
 
     @Before
