@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.0
+ * @version 2.1
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -133,19 +133,25 @@ public class Main {
      *
      * @since 2.0
      */
-    private static void SetKey(Decryptor decryptor) {
+    private static void SetKey(EncryptionFunction encryptionFunction, ChoiceEnum choice) {
         /*
         SetKey pseudo code
-            flag <- false
-            do
-                print ("Enter Key:")
-                key <- input()
-                if (key can be converted to byte)
-                    flag <- true
-                else
-                    print("Key is not a byte")
-                    print("Please try again")
-            while (!flag)
+            switch(choice)
+                case ENCRYPT:
+                    key <- Random()
+                    output(key)
+                    break
+
+                case DECRYPT:
+                    while(true)
+                        print ("Enter Key:")
+                        key <- input()
+                    if (key can be converted to byte)
+                         break
+                    else
+                        print("Key is not a byte")
+                        print("Please try again")
+                    break
 
             decryptor.setKet(key as byte)
          */
@@ -182,8 +188,7 @@ public class Main {
                 break
 
             SetFilePath(encryptionFunction)
-            if (choice = DECRYPT)
-                SetKey(encryptionFunction as Decryptor)
+            SetKey(encryptionFunction, choice)
 
             encryptionFunction.preformFunction();
         */

@@ -7,7 +7,7 @@ import lombok.*;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 2.0
+ * @version 2.1
  */
 @Data public abstract class EncryptionFunction implements Runnable{
     // Attributes ------------------------------------------------------------------------------------------------------
@@ -15,27 +15,32 @@ import lombok.*;
      * path of file to preform function
      * @since 1.1
      */
-    String filePath;
+    private String filePath;
+    private byte key;
 
     // Contors ---------------------------------------------------------------------------------------------------------
 
     /**
      * default contor
      * filePath defaults to empty string
-     *
+     * key defaults to 0
      * @since 1.1
      */
     public EncryptionFunction() {
         filePath = "";
+        key = 0;
     }
 
     /**
      * contor
      * @since 1.0
      * @param filePath path of file to preform function
+     * @param key the key for the encryption
      */
-    public EncryptionFunction(String filePath) {
+    public EncryptionFunction(String filePath, byte key) {
+
         setFilePath(filePath);
+        setKey(key);
     }
 
     // Getters/Setters -------------------------------------------------------------------------------------------------
@@ -73,7 +78,6 @@ import lombok.*;
      * @param algorithmType Algorithm to apply
      * @param originalFile file to use algorithm on
      * @param outputFile output file
-     * @param key key to use algorithm with
      */
-    protected abstract void Algorithm(AlgorithmTypeEnum algorithmType, File originalFile, File outputFile, byte key);
+    protected abstract void Algorithm(AlgorithmTypeEnum algorithmType, File originalFile, File outputFile);
 }

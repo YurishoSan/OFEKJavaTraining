@@ -8,7 +8,7 @@ import java.io.File;
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.0
+ * @version 2.1
  */
 @Data public class Encryptor extends EncryptionFunction{
 
@@ -25,8 +25,8 @@ import java.io.File;
      * @since 1.0
      * @param filePath path of file to encrypt
      */
-    public Encryptor(String filePath) {
-        super(filePath);
+    public Encryptor(String filePath, byte key) {
+        super(filePath, key);
     }
 
     // Methods ---------------------------------------------------------------------------------------------------------
@@ -53,9 +53,6 @@ import java.io.File;
             original <- FileAt(filePath)
             encrypted <- FileAt(filePath + ".encrypted")
 
-            key <- Random()
-            print (key)
-
             Algorithm(CAESAR, original, encrypted, key)
          */
         System.out.println("encryption simulation of file " + filePath);
@@ -69,9 +66,8 @@ import java.io.File;
      * @param algorithmType  Type of Algorithm to use
      * @param original file to encrypt
      * @param encrypted output encrypted file
-     * @param key key to use in encryption
      */
-    protected void Algorithm(AlgorithmTypeEnum algorithmType, File original, File encrypted, byte key) {
+    protected void Algorithm(AlgorithmTypeEnum algorithmType, File original, File encrypted) {
     /*
     algorithm pseudo code
         switch(algorithmType)

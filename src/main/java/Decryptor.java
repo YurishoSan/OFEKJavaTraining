@@ -8,19 +8,15 @@ import java.io.File;
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 1.3
+ * @version 2.1
  */
 @Data public class Decryptor extends EncryptionFunction{
-
-    private int key;
-
     // Contors ---------------------------------------------------------------------------------------------------------
     /**
      * default contor
      */
     public Decryptor() {
         super();
-        key = 0;
     }
 
     /**
@@ -29,9 +25,8 @@ import java.io.File;
      * @param filePath path of file to decrypt
      * @param key key to decrypt with
      */
-    public Decryptor(String filePath, int key) {
-        super(filePath);
-        setKey(key);
+    public Decryptor(String filePath, byte key) {
+        super(filePath, key);
     }
 
     // Methods ---------------------------------------------------------------------------------------------------------
@@ -58,7 +53,7 @@ import java.io.File;
             encrypted <- FileAt(filePath)
             decrypted <- FileAt(filePath - ".encrypted" + "_decrypted" + [original-file-extension])
 
-            Algorithm(CAESAR, encrypted, decrypted, key)
+            Algorithm(CAESAR, encrypted, decrypted)
          */
         System.out.println("decryption simulation of file " + filePath);
     }
@@ -71,9 +66,8 @@ import java.io.File;
      * @param algorithmType  Type of Algorithm to use
      * @param encrypted encrypted file
      * @param decrypted output decrypted file
-     * @param key key to use in decryption
      */
-    protected void Algorithm(AlgorithmTypeEnum algorithmType, File encrypted, File decrypted, byte key) {
+    protected void Algorithm(AlgorithmTypeEnum algorithmType, File encrypted, File decrypted) {
         /*
         algorithm pseudo code
             switch(algorithmType)
