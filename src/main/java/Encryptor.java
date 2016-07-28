@@ -8,7 +8,7 @@ import java.io.File;
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.1
+ * @version 2.2
  */
 @Data public class Encryptor extends EncryptionFunction{
 
@@ -24,9 +24,11 @@ import java.io.File;
      * contor
      * @since 1.0
      * @param filePath path of file to encrypt
+     * @param key the key for the encryption
+     * @param algorithmType  Type of Algorithm to use
      */
-    public Encryptor(String filePath, byte key) {
-        super(filePath, key);
+    public Encryptor(String filePath, byte key, AlgorithmTypeEnum algorithmType) {
+        super(filePath, key, algorithmType);
     }
 
     // Methods ---------------------------------------------------------------------------------------------------------
@@ -41,7 +43,7 @@ import java.io.File;
     }
 
     /**
-     * mock encryption of file.
+     * encrypt the file.
      * prints that the file is being encrypted.
      * @since 1.0
      */
@@ -53,24 +55,7 @@ import java.io.File;
             original <- FileAt(filePath)
             encrypted <- FileAt(filePath + ".encrypted")
 
-            Algorithm(CAESAR, original, encrypted, key)
-         */
-        System.out.println("encryption simulation of file " + getFilePath());
-    }
-
-    /**
-     * Apply Encryption Algorithm to original file, and out put an encrypted file
-     *
-     * @since 2.0
-     *
-     * @param algorithmType  Type of Algorithm to use
-     * @param original file to encrypt
-     * @param encrypted output encrypted file
-     */
-    protected void Algorithm(AlgorithmTypeEnum algorithmType, File original, File encrypted) {
-    /*
-    algorithm pseudo code
-        switch(algorithmType)
+            switch(algorithmType)
             case NONE:
                 copy original file to encrypted file
                 break
@@ -80,6 +65,7 @@ import java.io.File;
                     encryptedByte <- originalByte + key with overflow
                     write encryptedByte to file encrypted
                 break
-     */
+         */
+        System.out.println("encryption simulation of file " + getFilePath());
     }
 }

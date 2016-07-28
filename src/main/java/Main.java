@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.1
+ * @version 2.2
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ public class Main {
     }
 
     /**
-     * Sets the key for the decryption
+     * Sets the key for the encryption/decryption
      *
      * If not a number the user will be requested to input the file name again
      *
@@ -155,6 +155,18 @@ public class Main {
 
             decryptor.setKet(key as byte)
          */
+    }
+
+    /**
+     * Sets the algorithm for the encryption/decryption
+     *
+     * @since 2.2
+     */
+    private static void SetAlgoritmType(EncryptionFunction encryptionFunction, AlgorithmTypeEnum algorithmType) {
+         /*
+        SetKey pseudo code
+            encryptionFunction.setAlgorithmType(CAESAR)
+        */
     }
 
     /**
@@ -189,6 +201,7 @@ public class Main {
 
             SetFilePath(encryptionFunction)
             SetKey(encryptionFunction, choice)
+            SetAlgorithmType(encryptionFunction, CAESAR)
 
             encryptionFunction.preformFunction();
         */

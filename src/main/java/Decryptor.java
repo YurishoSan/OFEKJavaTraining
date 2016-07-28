@@ -8,7 +8,7 @@ import java.io.File;
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.1
+ * @version 2.2
  */
 @Data public class Decryptor extends EncryptionFunction{
     // Contors ---------------------------------------------------------------------------------------------------------
@@ -20,13 +20,14 @@ import java.io.File;
     }
 
     /**
-     *contor
+     * contor
      * @since 1.0
-     * @param filePath path of file to decrypt
-     * @param key key to decrypt with
+     * @param filePath path of file to encrypt
+     * @param key the key for the encryption
+     * @param algorithmType  Type of Algorithm to use
      */
-    public Decryptor(String filePath, byte key) {
-        super(filePath, key);
+    public Decryptor(String filePath, byte key, AlgorithmTypeEnum algorithmType) {
+        super(filePath, key, algorithmType);
     }
 
     // Methods ---------------------------------------------------------------------------------------------------------
@@ -41,8 +42,7 @@ import java.io.File;
     }
 
     /**
-     * mock decryption of file.
-     * prints that the file is being decrypted.
+     * decrypt the file.
      * @since 1.0
      */
     private void Decrypt() {
@@ -53,23 +53,6 @@ import java.io.File;
             encrypted <- FileAt(filePath)
             decrypted <- FileAt(filePath - ".encrypted" + "_decrypted" + [original-file-extension])
 
-            Algorithm(CAESAR, encrypted, decrypted)
-         */
-        System.out.println("decryption simulation of file " + getFilePath());
-    }
-
-    /**
-     * Apply Decryption Algorithm to encrypted file, and out put a decrypted file
-     *
-     * @since 2.0
-     *
-     * @param algorithmType  Type of Algorithm to use
-     * @param encrypted encrypted file
-     * @param decrypted output decrypted file
-     */
-    protected void Algorithm(AlgorithmTypeEnum algorithmType, File encrypted, File decrypted) {
-        /*
-        algorithm pseudo code
             switch(algorithmType)
                case NONE:
                    copy encrypted file to decrypted file
@@ -80,6 +63,8 @@ import java.io.File;
                        decryptedByte <- encryptedByte - key with underflow
                        write decryptedByte to file decrypted
                    break
-     */
+         */
+
+        System.out.println("decryption simulation of file " + getFilePath());
     }
 }

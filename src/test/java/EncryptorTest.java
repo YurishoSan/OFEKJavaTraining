@@ -4,9 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -15,8 +13,17 @@ import static org.junit.Assert.*;
  * Created by yurisho on 21/07/2016.
  */
 public class EncryptorTest {
+    private final String fileName = "text.txt";
+    private final String fileContent = "Hello, world!";
+    private final byte key = 10;
+    private final String fileContentCaesarEncrypted = "Rovvy, gybvn!"; // encryption checked with http://www.xarg.org/tools/caesar-cipher/
+
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+
+    private String testFilePath;
+    private File original;
+    private File encrypted;
 
     private Encryptor encryptor;
 
@@ -25,9 +32,17 @@ public class EncryptorTest {
 
     @Before
     public void setUpEncryptor() throws IOException {
-        folder.newFile("test.txt");
-        byte key = 0;
-        encryptor = new Encryptor(folder.getRoot().getCanonicalPath() + "\\test.txt", key);
+        testFilePath = folder.getRoot().getCanonicalPath() + "\\" + fileName;
+        folder.newFile(fileName);
+        original = new File(testFilePath);
+        encrypted = new File(testFilePath + ".encrypted");
+
+        //write test data to file
+        PrintWriter writer = new PrintWriter(testFilePath, "UTF-8");
+        writer.println(fileContent);
+        writer.close();
+
+        encryptor = new Encryptor(testFilePath, key, AlgorithmTypeEnum.NONE);
     }
 
     @Before
@@ -49,8 +64,30 @@ public class EncryptorTest {
 
     @Test
     public void preformFunctionShouldWriteToScreen() {
-        encryptor.PreformFunction();
+        encryptor.run();
         assertThat(outContent.toString(), is("encryption simulation of file " + encryptor.getFilePath() + "\r\n"));
+    }
+
+    @Test
+    public void EncryptNoneShouldNotChangeTheFileContent() throws IOException {
+        encryptor.setAlgorithmType(AlgorithmTypeEnum.NONE);
+
+        encryptor.run();
+
+        BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
+
+        assertThat(encryptedReader.readLine(), is(fileContent));
+    }
+
+    @Test
+    public void EncryptCaesarShouldEncryptTheFileContent() throws IOException {
+        encryptor.setAlgorithmType(AlgorithmTypeEnum.CAESAR);
+
+        encryptor.run();
+
+        BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
+
+        assertThat(encryptedReader.readLine(), is(fileContentCaesarEncrypted));
     }
 
 }

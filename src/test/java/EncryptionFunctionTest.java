@@ -27,10 +27,6 @@ public class EncryptionFunctionTest {
             protected void PreformFunction() {
                 return;
             }
-
-            @Override
-            protected void Algorithm(AlgorithmTypeEnum algorithmType, File original, File output) {
-            }
         };
     }
 
