@@ -26,7 +26,8 @@ public class EncryptorTest {
     @Before
     public void setUpEncryptor() throws IOException {
         folder.newFile("test.txt");
-        encryptor = new Encryptor(folder.getRoot().getCanonicalPath() + "\\test.txt");
+        byte key = 0;
+        encryptor = new Encryptor(folder.getRoot().getCanonicalPath() + "\\test.txt", key);
     }
 
     @Before

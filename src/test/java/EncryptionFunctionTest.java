@@ -29,7 +29,7 @@ public class EncryptionFunctionTest {
             }
 
             @Override
-            protected void Algorithm(AlgorithmTypeEnum algorithmType, File original, File output, byte key) {
+            protected void Algorithm(AlgorithmTypeEnum algorithmType, File original, File output) {
             }
         };
     }

@@ -55,7 +55,7 @@ import java.io.File;
 
             Algorithm(CAESAR, encrypted, decrypted)
          */
-        System.out.println("decryption simulation of file " + filePath);
+        System.out.println("decryption simulation of file " + getFilePath());
     }
 
     /**
