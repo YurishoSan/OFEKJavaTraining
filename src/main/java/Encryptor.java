@@ -1,6 +1,9 @@
 import lombok.*;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by yurisho on 20/07/2016.
@@ -8,7 +11,7 @@ import java.io.File;
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.2
+ * @version 2.3
  */
 @Data public class Encryptor extends EncryptionFunction{
 
@@ -38,7 +41,7 @@ import java.io.File;
      * @since 1.1
      * @see #Encrypt()
      */
-    protected void PreformFunction() {
+    protected void PreformFunction() throws IOException {
         Encrypt();
     }
 
@@ -47,7 +50,7 @@ import java.io.File;
      * prints that the file is being encrypted.
      * @since 1.0
      */
-    private void Encrypt() {
+    private void Encrypt() throws IOException{
         /*
         Encrypt pseudo code
             print("encryption simulation of file " + filePath")
@@ -67,5 +70,37 @@ import java.io.File;
                 break
          */
         System.out.println("encryption simulation of file " + getFilePath());
+
+        FileInputStream original = null;
+        FileOutputStream encrypted = null;
+
+        try {
+            original = new FileInputStream(getFilePath());
+            encrypted = new FileOutputStream(getFilePath() + ".encrypted");
+            int c;
+
+            switch(getAlgorithmType()) {
+                case NONE:
+                    while ((c = original.read()) != -1) {
+                        encrypted.write(c);
+                    }
+                    break;
+                case CAESAR:
+                    while ((c = original.read()) != -1) {
+                        /* overflow wrapping is handled by java as per java specifications
+                        ("The integer operators do not indicate overflow or underflow in any way.")
+                        source: http://docs.oracle.com/javase/specs/jls/se7/html/jls-4.html#jls-4.2.2 */
+                        encrypted.write((byte)c + getKey());
+                    }
+                    break;
+            }
+        } finally {
+            if (original != null) {
+                original.close();
+            }
+            if (encrypted != null) {
+                encrypted.close();
+            }
+        }
     }
 }

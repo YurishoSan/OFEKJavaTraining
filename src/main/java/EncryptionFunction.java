@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.IOException;
+
 import lombok.*;
 
 /**
@@ -7,7 +9,7 @@ import lombok.*;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 2.2
+ * @version 2.3
  */
 @Data public abstract class EncryptionFunction implements Runnable{
     // Attributes ------------------------------------------------------------------------------------------------------
@@ -69,8 +71,11 @@ import lombok.*;
     }
 
     public void run() {
-        PreformFunction();
+        try {
+            PreformFunction();
+        } catch (IOException exp) {
+        }
     }
 
-    protected abstract void PreformFunction();
+    protected abstract void PreformFunction() throws IOException;
 }

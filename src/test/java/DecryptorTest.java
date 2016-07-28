@@ -33,11 +33,11 @@ public class DecryptorTest {
     @Before
     public void setUpDecryptor() throws IOException {
         testFilePath = folder.getRoot().getCanonicalPath() + "\\" + fileName;
-        String testFilePathWOExtention = testFilePath.substring(0, testFilePath.lastIndexOf('.'));
-        String testFilePathExtention = testFilePath.substring(testFilePath.lastIndexOf(".") + 1);
+        String testFilePathWOExtension = testFilePath.substring(0, testFilePath.lastIndexOf('.'));
+        String testFilePathExtension = testFilePath.substring(testFilePath.lastIndexOf("."));
         folder.newFile(fileName + ".encrypted");
         encrypted = new File(testFilePath + ".encrypted");
-        decrypted = new File(testFilePathWOExtention + "_decrypted." + testFilePathExtention);
+        decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
         decryptor = new Decryptor(folder.getRoot().getCanonicalPath() + "\\test.txt", key, AlgorithmTypeEnum.NONE);
     }
@@ -57,6 +57,26 @@ public class DecryptorTest {
     public void cleanUpStreams() {
         System.setOut(null);
         System.setErr(null);
+    }
+
+    @Test
+    public void setFilePathShouldFail() throws IOException {
+        folder.newFile("myFile.txt");
+
+        decryptor.setFilePath(folder.getRoot().getCanonicalPath() + "\\myFile.txt"); //no '.encrypted' extension
+        assertThat(decryptor.getFilePath(), is(""));
+    }
+
+    @Test
+    public void setFilePathShouldSucceed() throws IOException {
+        folder.newFile("myFile.txt.encrypted");
+        folder.newFile("myFile.encrypted");
+
+        decryptor.setFilePath(folder.getRoot().getCanonicalPath() + "\\myFile.txt.encrypted");
+        assertThat(decryptor.getFilePath(), is(folder.getRoot().getCanonicalPath() + "\\myFile.txt.encrypted"));
+
+        decryptor.setFilePath(folder.getRoot().getCanonicalPath() + "\\myFile.encrypted");
+        assertThat(decryptor.getFilePath(), is(folder.getRoot().getCanonicalPath() + "\\myFile.encrypted"));
     }
 
     @Test

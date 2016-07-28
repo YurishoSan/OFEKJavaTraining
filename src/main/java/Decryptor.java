@@ -1,6 +1,9 @@
 import lombok.*;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by yurisho on 20/07/2016.
@@ -8,7 +11,7 @@ import java.io.File;
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.2
+ * @version 2.3
  */
 @Data public class Decryptor extends EncryptionFunction{
     // Contors ---------------------------------------------------------------------------------------------------------
@@ -30,6 +33,23 @@ import java.io.File;
         super(filePath, key, algorithmType);
     }
 
+    // Getters/Setters -------------------------------------------------------------------------------------------------
+    /**
+     * validates the value is a valid path with '.encrypted' extension
+     * if validation fails the function returns without doing anything.
+     * @since 2.2
+     * @param value
+     */
+    public void setFilePath(String value) {
+        /*
+        SetFilePath pseudo code
+            super.setFilePath(value)
+            if (extension not '.encrypted')
+                setFilePath("")
+         */
+        super.setFilePath(value);
+    }
+
     // Methods ---------------------------------------------------------------------------------------------------------
 
     /**
@@ -37,7 +57,7 @@ import java.io.File;
      * @since 1.1
      * @see #Decrypt()
      */
-    protected void PreformFunction() {
+    protected void PreformFunction() throws IOException {
         Decrypt();
     }
 
@@ -45,7 +65,7 @@ import java.io.File;
      * decrypt the file.
      * @since 1.0
      */
-    private void Decrypt() {
+    private void Decrypt() throws IOException{
         /*
         Encrypt pseudo code
             print("decryption simulation of file " + filePath)
@@ -64,7 +84,53 @@ import java.io.File;
                        write decryptedByte to file decrypted
                    break
          */
+        String originalFilePath;
+        String testFilePathWOExtension;
+        String testFilePathExtension;
 
         System.out.println("decryption simulation of file " + getFilePath());
+
+        //get file names
+        originalFilePath = getFilePath().substring(0, getFilePath().lastIndexOf('.')); // remove '.encrypted', duo to setFilePath override, there must be a '.encrypted'
+        if(getFilePath() != null && getFilePath().contains(".")) { // if there is an extension
+            testFilePathWOExtension = originalFilePath.substring(0, originalFilePath.lastIndexOf('.'));
+            testFilePathExtension = originalFilePath.substring(originalFilePath.lastIndexOf("."));
+        }
+        else { //no extension
+            testFilePathWOExtension = originalFilePath;
+            testFilePathExtension = "";
+        }
+
+        FileInputStream encrypted = null;
+        FileOutputStream decrypted = null;
+
+        try {
+            encrypted = new FileInputStream(getFilePath());
+            decrypted = new FileOutputStream(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
+            int c;
+
+            switch(getAlgorithmType()) {
+                case NONE:
+                    while ((c = encrypted.read()) != -1) {
+                        decrypted.write(c);
+                    }
+                    break;
+                case CAESAR:
+                    while ((c = encrypted.read()) != -1) {
+                        /* underflow wrapping is handled by java as per java specifications
+                        ("The integer operators do not indicate overflow or underflow in any way.")
+                        source: http://docs.oracle.com/javase/specs/jls/se7/html/jls-4.html#jls-4.2.2 */
+                        decrypted.write((byte)c - getKey());
+                    }
+                    break;
+            }
+        } finally {
+            if (encrypted != null) {
+                encrypted.close();
+            }
+            if (decrypted != null) {
+                decrypted.close();
+            }
+        }
     }
 }
