@@ -9,7 +9,7 @@ import lombok.*;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 2.3
+ * @version 2.4
  */
 @Data public abstract class EncryptionFunction implements Runnable{
     // Attributes ------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ import lombok.*;
             filePath = value
          */
         File file = new File(value);
-        if (!FileUtils.isFilenameValid(value) || !file.exists() || file.isDirectory())
+        if (value != "" && (!FileUtils.isFilenameValid(value) || !file.exists() || file.isDirectory()))
             return;
         filePath = value;
     }

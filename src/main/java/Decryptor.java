@@ -11,7 +11,7 @@ import java.io.IOException;
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.3
+ * @version 2.4
  */
 @Data public class Decryptor extends EncryptionFunction{
     // Contors ---------------------------------------------------------------------------------------------------------
@@ -48,6 +48,9 @@ import java.io.IOException;
                 setFilePath("")
          */
         super.setFilePath(value);
+        if (!(getFilePath() != null && getFilePath().contains(".")) || // if has no extension
+                !(getFilePath().substring(getFilePath().lastIndexOf(".")).equals(".encrypted"))) // or extension is not ".encrypted"
+            super.setFilePath("");
     }
 
     // Methods ---------------------------------------------------------------------------------------------------------

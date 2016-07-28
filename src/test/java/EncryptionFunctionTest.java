@@ -53,6 +53,9 @@ public class EncryptionFunctionTest {
     public void setFilePathShouldSucceed() throws IOException {
         folder.newFile("myFile.txt");
 
+        encryptionFunction.setFilePath(""); //empty path value
+        assertThat(encryptionFunction.getFilePath(), is(""));
+
         encryptionFunction.setFilePath(folder.getRoot().getCanonicalPath() + "\\myFile.txt");
         assertThat(encryptionFunction.getFilePath(), is(folder.getRoot().getCanonicalPath() + "\\myFile.txt"));
     }

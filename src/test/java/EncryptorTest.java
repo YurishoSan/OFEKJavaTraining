@@ -69,6 +69,16 @@ public class EncryptorTest {
     }
 
     @Test
+    public void EncryptEmptyFilePathShouldDoNothing() throws IOException{
+        encryptor.setFilePath("");
+
+        encryptor.run();
+
+        if(!encrypted.exists()) //file does not exist
+            return;
+    }
+
+    @Test
     public void EncryptNoneShouldNotChangeTheFileContent() throws IOException {
         encryptor.setAlgorithmType(AlgorithmTypeEnum.NONE);
 

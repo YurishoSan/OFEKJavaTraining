@@ -86,6 +86,16 @@ public class DecryptorTest {
     }
 
     @Test
+    public void DecryptEmptyFilePathShouldDoNothing() throws IOException{
+        decryptor.setFilePath("");
+
+        decryptor.run();
+
+        if(!decrypted.exists()) //file does not exist
+            return;
+    }
+
+    @Test
     public void DecryptNoneShouldNotChangeTheFileContent() throws IOException {
         decryptor.setAlgorithmType(AlgorithmTypeEnum.NONE);
 
@@ -96,9 +106,9 @@ public class DecryptorTest {
 
         decryptor.run();
 
-        BufferedReader encryptedReader = new BufferedReader(new FileReader(decrypted));
+        BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
 
-        assertThat(encryptedReader.readLine(), is(fileContentDecrypted));
+        assertThat(decryptedReader.readLine(), is(fileContentDecrypted));
     }
 
     @Test
@@ -112,9 +122,9 @@ public class DecryptorTest {
 
         decryptor.run();
 
-        BufferedReader encryptedReader = new BufferedReader(new FileReader(decrypted));
+        BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
 
-        assertThat(encryptedReader.readLine(), is(fileContentDecrypted));
+        assertThat(decryptedReader.readLine(), is(fileContentDecrypted));
     }
 
 }
