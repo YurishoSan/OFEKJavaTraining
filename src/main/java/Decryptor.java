@@ -1,6 +1,5 @@
 import lombok.*;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,8 +10,9 @@ import java.io.IOException;
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.4
+ * @version 2.5
  */
+@EqualsAndHashCode(callSuper = true)
 @Data public class Decryptor extends EncryptionFunction{
     // Contors ---------------------------------------------------------------------------------------------------------
     /**
@@ -38,7 +38,7 @@ import java.io.IOException;
      * validates the value is a valid path with '.encrypted' extension
      * if validation fails the function returns without doing anything.
      * @since 2.2
-     * @param value
+     * @param value value to set filePath
      */
     public void setFilePath(String value) {
         /*
@@ -93,6 +93,9 @@ import java.io.IOException;
 
         System.out.println("decryption simulation of file " + getFilePath());
 
+        if (getFilePath().equals(""))
+            return;
+
         //get file names
         originalFilePath = getFilePath().substring(0, getFilePath().lastIndexOf('.')); // remove '.encrypted', duo to setFilePath override, there must be a '.encrypted'
         if(getFilePath() != null && getFilePath().contains(".")) { // if there is an extension
@@ -120,10 +123,10 @@ import java.io.IOException;
                     break;
                 case CAESAR:
                     while ((c = encrypted.read()) != -1) {
-                        /* underflow wrapping is handled by java as per java specifications
-                        ("The integer operators do not indicate overflow or underflow in any way.")
-                        source: http://docs.oracle.com/javase/specs/jls/se7/html/jls-4.html#jls-4.2.2 */
-                        decrypted.write((byte)c - getKey());
+                        int value = c - getKey();
+                        while (value < 0)
+                            value = Byte.MAX_VALUE + value + 1;
+                        decrypted.write((byte)value);
                     }
                     break;
             }

@@ -1,6 +1,5 @@
 import lombok.*;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,8 +10,9 @@ import java.io.IOException;
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.3
+ * @version 2.4
  */
+@EqualsAndHashCode(callSuper = true)
 @Data public class Encryptor extends EncryptionFunction{
 
     // Contors ---------------------------------------------------------------------------------------------------------
@@ -71,6 +71,9 @@ import java.io.IOException;
          */
         System.out.println("encryption simulation of file " + getFilePath());
 
+        if (getFilePath().equals(""))
+            return;
+
         FileInputStream original = null;
         FileOutputStream encrypted = null;
 
@@ -87,10 +90,10 @@ import java.io.IOException;
                     break;
                 case CAESAR:
                     while ((c = original.read()) != -1) {
-                        /* overflow wrapping is handled by java as per java specifications
-                        ("The integer operators do not indicate overflow or underflow in any way.")
-                        source: http://docs.oracle.com/javase/specs/jls/se7/html/jls-4.html#jls-4.2.2 */
-                        encrypted.write((byte)c + getKey());
+                        int value = c + getKey();
+                        while (value > Byte.MAX_VALUE)
+                            value = value - Byte.MAX_VALUE - 1;
+                        encrypted.write((byte)value);
                     }
                     break;
             }

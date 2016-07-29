@@ -54,7 +54,7 @@ import lombok.*;
      * validates the value is a valid path, and that it is not a directory and that it exists, and sets filePath to value.
      * if validation fails the function returns without doing anything.
      * @since 1.0
-     * @param value
+     * @param value value to set filePath
      */
     public void setFilePath(String value) {
         /*
@@ -65,7 +65,7 @@ import lombok.*;
             filePath = value
          */
         File file = new File(value);
-        if (value != "" && (!FileUtils.isFilenameValid(value) || !file.exists() || file.isDirectory()))
+        if (value.equals("") && (!FileUtils.isFilenameValid(value) || !file.exists() || file.isDirectory()))
             return;
         filePath = value;
     }
@@ -74,6 +74,7 @@ import lombok.*;
         try {
             PreformFunction();
         } catch (IOException exp) {
+            System.out.println(exp.getMessage());
         }
     }
 

@@ -11,17 +11,15 @@ import static org.junit.Assert.*;
 
 /**
  * Created by yurisho on 21/07/2016.
+ *
+ * Test Encryptor class
  */
 public class EncryptorTest {
-    private final String fileName = "text.txt";
     private final String fileContent = "Hello, world!";
-    private final byte key = 10;
-    private final String fileContentCaesarEncrypted = "Rovvy, gybvn!"; // encryption checked with http://www.xarg.org/tools/caesar-cipher/
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
-    private String testFilePath;
     private File original;
     private File encrypted;
 
@@ -32,13 +30,17 @@ public class EncryptorTest {
 
     @Before
     public void setUpEncryptor() throws IOException {
+        final String fileName = "text.txt";
+        final byte key = 10;
+        String testFilePath;
+
         testFilePath = folder.getRoot().getCanonicalPath() + "\\" + fileName;
         folder.newFile(fileName);
         original = new File(testFilePath);
         encrypted = new File(testFilePath + ".encrypted");
 
         //write test data to file
-        PrintWriter writer = new PrintWriter(testFilePath, "UTF-8");
+        PrintWriter writer = new PrintWriter(original, "UTF-8");
         writer.println(fileContent);
         writer.close();
 
@@ -74,8 +76,8 @@ public class EncryptorTest {
 
         encryptor.run();
 
-        if(!encrypted.exists()) //file does not exist
-            return;
+        if(encrypted.exists())
+            fail();
     }
 
     @Test
@@ -91,13 +93,15 @@ public class EncryptorTest {
 
     @Test
     public void EncryptCaesarShouldEncryptTheFileContent() throws IOException {
+        byte[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x01,0x79,0x7c,0x76,0x6e,0x2b};
+        String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
         encryptor.setAlgorithmType(AlgorithmTypeEnum.CAESAR);
 
         encryptor.run();
 
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 
-        assertThat(encryptedReader.readLine(), is(fileContentCaesarEncrypted));
+        assertThat(encryptedReader.readLine().substring(0,13), is(fileContentCaesarEncrypted)); // use substring to remove extra bytes at end of file
     }
 
 }

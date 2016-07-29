@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 
 /**
  * Created by yurisho on 21/07/2016.
+ *
+ * Test FileUtils class
  */
 public class FileUtilsTest {
     @Test

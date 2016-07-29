@@ -109,7 +109,6 @@ public class Main {
          */
 
         String filePath; //path of file to get from user
-        String error = ""; //error string
 
         Scanner reader = new Scanner(System.in); // input reader
 

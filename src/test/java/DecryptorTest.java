@@ -11,17 +11,15 @@ import static org.junit.Assert.*;
 
 /**
  * Created by yurisho on 21/07/2016.
+ *
+ * Test Decryptor class
  */
 public class DecryptorTest {
-    private final String fileName = "text.txt";
     private final String fileContentDecrypted = "Hello, world!";
-    private final byte key = 10;
-    private final String fileContentCaesarEncrypted = "Rovvy, gybvn!"; // encryption checked with http://www.xarg.org/tools/caesar-cipher/
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
-    private String testFilePath;
     private File encrypted;
     private File decrypted;
 
@@ -32,6 +30,10 @@ public class DecryptorTest {
 
     @Before
     public void setUpDecryptor() throws IOException {
+        String testFilePath;
+        final byte key = 10;
+        final String fileName = "text.txt";
+
         testFilePath = folder.getRoot().getCanonicalPath() + "\\" + fileName;
         String testFilePathWOExtension = testFilePath.substring(0, testFilePath.lastIndexOf('.'));
         String testFilePathExtension = testFilePath.substring(testFilePath.lastIndexOf("."));
@@ -39,7 +41,7 @@ public class DecryptorTest {
         encrypted = new File(testFilePath + ".encrypted");
         decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
-        decryptor = new Decryptor(folder.getRoot().getCanonicalPath() + "\\test.txt", key, AlgorithmTypeEnum.NONE);
+        decryptor = new Decryptor(testFilePath + ".encrypted", key, AlgorithmTypeEnum.NONE);
     }
 
     @Before
@@ -91,8 +93,8 @@ public class DecryptorTest {
 
         decryptor.run();
 
-        if(!decrypted.exists()) //file does not exist
-            return;
+        if(decrypted.exists())
+            fail();
     }
 
     @Test
@@ -100,7 +102,7 @@ public class DecryptorTest {
         decryptor.setAlgorithmType(AlgorithmTypeEnum.NONE);
 
         //write test data to file
-        PrintWriter writer = new PrintWriter(testFilePath, "UTF-8");
+        PrintWriter writer = new PrintWriter(encrypted, "UTF-8");
         writer.println(fileContentDecrypted);
         writer.close();
 
@@ -112,11 +114,13 @@ public class DecryptorTest {
     }
 
     @Test
-    public void DecryptCaesarShouldEncryptTheFileContent() throws IOException {
+    public void DecryptCaesarShouldDecryptTheFileContent() throws IOException {
+        byte[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x01,0x79,0x7c,0x76,0x6e,0x2b};
+        String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
         decryptor.setAlgorithmType(AlgorithmTypeEnum.CAESAR);
 
         //write test data to file
-        PrintWriter writer = new PrintWriter(testFilePath, "UTF-8");
+        PrintWriter writer = new PrintWriter(encrypted, "UTF-8");
         writer.println(fileContentCaesarEncrypted);
         writer.close();
 
@@ -124,7 +128,7 @@ public class DecryptorTest {
 
         BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
 
-        assertThat(decryptedReader.readLine(), is(fileContentDecrypted));
+        assertThat(decryptedReader.readLine().substring(0,13), is(fileContentDecrypted)); // use substring to remove extra bytes at end of file
     }
 
 }

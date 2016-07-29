@@ -4,7 +4,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.*;
@@ -12,6 +11,8 @@ import static org.junit.Assert.*;
 
 /**
  * Created by yurisho on 21/07/2016.
+ *
+ * test EncryptionFunction class
  */
 public class EncryptionFunctionTest {
     private EncryptionFunction encryptionFunction;
@@ -25,7 +26,6 @@ public class EncryptionFunctionTest {
         encryptionFunction = new EncryptionFunction() {
             @Override
             protected void PreformFunction() {
-                return;
             }
         };
     }
