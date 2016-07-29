@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -6,7 +7,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.2
+ * @version 2.3
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -130,7 +131,7 @@ public class Main {
      *
      * If not a number the user will be requested to input the file name again
      *
-     * @since 2.0
+     * @since 2.3
      */
     private static void SetKey(EncryptionFunction encryptionFunction, ChoiceEnum choice) {
         /*
@@ -152,20 +153,51 @@ public class Main {
                         print("Please try again")
                     break
 
-            decryptor.setKet(key as byte)
+            encryptionFunction.setKet(key as byte)
          */
+
+        Random rnd = new Random();
+        byte key = 0;
+
+        switch (choice) {
+            case ENCRYPT:
+                key = (byte)rnd.nextInt(128);
+                System.out.println("key: " + key);
+                break;
+
+            case DECRYPT:
+                Scanner scanner = new Scanner(System.in);
+
+                while(true) {
+                    System.out.println("Enter key:");
+                    try {
+                        key = Byte.parseByte(scanner.nextLine());
+                        if (key < 0)
+                            throw new IllegalArgumentException("key must be between 0 and 127");
+
+                        break; //good key found, exit while loop
+                    }
+                    catch (IllegalArgumentException exp) {
+                        System.out.println("key must be a number in range 0-127, please try again:");
+                    }
+                }
+                break;
+        }
+
+        encryptionFunction.setKey(key);
     }
 
     /**
      * Sets the algorithm for the encryption/decryption
      *
-     * @since 2.2
+     * @since 2.3
      */
     private static void SetAlgoritmType(EncryptionFunction encryptionFunction, AlgorithmTypeEnum algorithmType) {
          /*
-        SetKey pseudo code
-            encryptionFunction.setAlgorithmType(CAESAR)
+        SetAlgoritmType pseudo code
+            encryptionFunction.setAlgorithmType(algorithmType)
         */
+         encryptionFunction.setAlgorithmType(algorithmType);
     }
 
     /**
@@ -175,6 +207,7 @@ public class Main {
      *
      * @since 1.0
      */
+    @SuppressWarnings("SpellCheckingInspection")
     public static void pauseProg(){
         System.out.println("Press enter to continue...");
         Scanner keyboard = new Scanner(System.in);
@@ -202,7 +235,7 @@ public class Main {
             SetKey(encryptionFunction, choice)
             SetAlgorithmType(encryptionFunction, CAESAR)
 
-            encryptionFunction.preformFunction();
+            encryptionFunction.run();
         */
 
         EncryptionFunction encryptionFunction; // object for encryption function to preform
@@ -224,6 +257,8 @@ public class Main {
         }
 
         SetFilePath(encryptionFunction);
+        SetKey(encryptionFunction, choice);
+        SetAlgoritmType(encryptionFunction, AlgorithmTypeEnum.CAESAR);
 
         encryptionFunction.run();
 

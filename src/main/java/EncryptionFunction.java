@@ -65,7 +65,7 @@ import lombok.*;
             filePath = value
          */
         File file = new File(value);
-        if (value.equals("") && (!FileUtils.isFilenameValid(value) || !file.exists() || file.isDirectory()))
+        if (!value.equals("") && (!FileUtils.isFilenameValid(value) || !file.exists() || file.isDirectory()))
             return;
         filePath = value;
     }
