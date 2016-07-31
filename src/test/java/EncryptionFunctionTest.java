@@ -4,6 +4,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.*;
@@ -24,8 +26,16 @@ public class EncryptionFunctionTest {
     public void setUpEncryptionFunction() {
         //build a generic encryptionFunction
         encryptionFunction = new EncryptionFunction() {
-            @Override
-            protected void PreformFunction() {
+            protected String getInputFileName() {
+                return null;
+            }
+
+            protected String getOutputFileName() {
+                return null;
+            }
+
+            public void algorithm(FileInputStream inputFile, FileOutputStream outputFile, byte key) throws IOException {
+
             }
         };
     }

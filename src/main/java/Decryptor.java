@@ -10,7 +10,7 @@ import java.io.IOException;
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.5
+ * @version 2.6
  */
 @EqualsAndHashCode(callSuper = true)
 @Data public class Decryptor extends EncryptionFunction{
@@ -40,6 +40,7 @@ import java.io.IOException;
      * @since 2.2
      * @param value value to set filePath
      */
+    @Override
     public void setFilePath(String value) {
         /*
         SetFilePath pseudo code
@@ -53,48 +54,16 @@ import java.io.IOException;
             super.setFilePath("");
     }
 
-    // Methods ---------------------------------------------------------------------------------------------------------
-
-    /**
-     * call Decrypt
-     * @since 1.1
-     * @see #Decrypt()
-     */
-    protected void PreformFunction() throws IOException {
-        Decrypt();
+    @Override
+    protected String getInputFileName() {
+        return getFilePath();
     }
 
-    /**
-     * decrypt the file.
-     * @since 1.0
-     */
-    private void Decrypt() throws IOException{
-        /*
-        Encrypt pseudo code
-            print("decryption simulation of file " + filePath)
-
-            encrypted <- FileAt(filePath)
-            decrypted <- FileAt(filePath - ".encrypted" + "_decrypted" + [original-file-extension])
-
-            switch(algorithmType)
-               case NONE:
-                   copy encrypted file to decrypted file
-                   break
-
-               case CAESAR:
-                   for-each byte encryptedByte in encrypted
-                       decryptedByte <- encryptedByte - key with underflow
-                       write decryptedByte to file decrypted
-                   break
-         */
+    @Override
+    protected String getOutputFileName() {
         String originalFilePath;
         String testFilePathWOExtension;
         String testFilePathExtension;
-
-        System.out.println("decryption simulation of file " + getFilePath());
-
-        if (getFilePath().equals(""))
-            return;
 
         //get file names
         originalFilePath = getFilePath().substring(0, getFilePath().lastIndexOf('.')); // remove '.encrypted', duo to setFilePath override, there must be a '.encrypted'
@@ -107,36 +76,21 @@ import java.io.IOException;
             testFilePathExtension = "";
         }
 
-        FileInputStream encrypted = null;
-        FileOutputStream decrypted = null;
+        return testFilePathWOExtension + "_decrypted" + testFilePathExtension;
+    }
 
-        try {
-            encrypted = new FileInputStream(getFilePath());
-            decrypted = new FileOutputStream(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
-            int c;
+    // Methods ---------------------------------------------------------------------------------------------------------
 
-            switch(getAlgorithmType()) {
-                case NONE:
-                    while ((c = encrypted.read()) != -1) {
-                        decrypted.write(c);
-                    }
-                    break;
-                case CAESAR:
-                    while ((c = encrypted.read()) != -1) {
-                        int value = c - getKey();
-                        while (value < 0)
-                            value = Byte.MAX_VALUE + value + 1;
-                        decrypted.write((byte)value);
-                    }
-                    break;
-            }
-        } finally {
-            if (encrypted != null) {
-                encrypted.close();
-            }
-            if (decrypted != null) {
-                decrypted.close();
-            }
-        }
+    /**
+     * decrypt the file.
+     * prints that the file is being encrypted.
+     * @since 2.6
+     */
+    public void algorithm(FileInputStream encrypted, FileOutputStream decrypted, byte key) throws IOException {
+        /*
+        algorithm pseudo code
+            print("decryption simulation of file " + filePath)
+         */
+        System.out.println("decryption simulation of file " + getFilePath());
     }
 }

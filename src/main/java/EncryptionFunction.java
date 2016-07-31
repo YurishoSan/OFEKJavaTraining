@@ -1,5 +1,6 @@
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import lombok.*;
 
@@ -9,9 +10,9 @@ import lombok.*;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 2.4
+ * @version 2.5
  */
-@Data public abstract class EncryptionFunction implements Runnable{
+@Data public abstract class EncryptionFunction implements Runnable, EncryptionAlgorithm{
     // Attributes ------------------------------------------------------------------------------------------------------
     /**
      * path of file to preform function
@@ -70,13 +71,52 @@ import lombok.*;
         filePath = value;
     }
 
+    /**
+     * call algorithm function
+     * @since 1.1
+     * @see #algorithm(FileInputStream, FileOutputStream, byte)
+     */
     public void run() {
+        if (getFilePath().equals(""))
+            return;
+
+        FileInputStream inputFile = null;
+        FileOutputStream outputFile = null;
+
         try {
-            PreformFunction();
+            inputFile = new FileInputStream(getInputFileName());
+            outputFile = new FileOutputStream(getOutputFileName());
+
+            algorithm(inputFile, outputFile, getKey());
+
         } catch (IOException exp) {
             System.out.println(exp.getMessage());
+            System.out.println(Arrays.toString(exp.getStackTrace()));
+
+        } finally {
+            close(inputFile);
+            close(outputFile);
         }
     }
 
-    protected abstract void PreformFunction() throws IOException;
+    /**
+     * Closes a closeable object
+     *
+     * See: http://stackoverflow.com/questions/2699209/java-io-ugly-try-finally-block
+     *
+     * @param c the closeable object to close
+     * @since 2.5
+     */
+    private static void close(Closeable c) {
+        if (c == null) return;
+        try {
+            c.close();
+        } catch (IOException exp) {
+            System.out.println(exp.getMessage());
+            System.out.println(Arrays.toString(exp.getStackTrace()));
+        }
+    }
+
+    protected abstract String getInputFileName();
+    protected abstract String getOutputFileName();
 }
