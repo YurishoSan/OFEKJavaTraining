@@ -31,7 +31,7 @@ public class EncryptorTest {
     @Before
     public void setUpEncryptor() throws IOException {
         final String fileName = "text.txt";
-        final byte key = 10;
+        final char key = 10;
         String testFilePath;
 
         testFilePath = folder.getRoot().getCanonicalPath() + "\\" + fileName;

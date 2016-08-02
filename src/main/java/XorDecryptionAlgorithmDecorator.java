@@ -1,6 +1,6 @@
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.io.*;
 
 /**
  * Created by yurisho on 02/08/2016.
@@ -16,11 +16,13 @@ public class XorDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorato
     }
 
     @Override
-    public void algorithm(FileInputStream encrypted, FileOutputStream decrypted, byte key) throws IOException {
+    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException {
          /* algorithm pseudo code
             for-each byte encryptedByte in encrypted
                        decryptedByte <- encryptedByte ^ key
                        write decryptedByte to file decrypted
         */
+
+        throw new NotImplementedException();
     }
 }

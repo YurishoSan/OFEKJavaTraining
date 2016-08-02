@@ -1,6 +1,4 @@
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by yurisho on 31/07/2016.
@@ -8,7 +6,7 @@ import java.io.IOException;
  * Preforms caesar decryption algorithm
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
 public class CaesarDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator {
     public CaesarDecryptionAlgorithmDecorator(EncryptionAlgorithm decoratedDecryptionAlgorithm) {
@@ -16,7 +14,7 @@ public class CaesarDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecor
     }
 
     @Override
-    public void algorithm(FileInputStream encrypted, FileOutputStream decrypted, byte key) throws IOException {
+    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException {
         /* algorithm pseudo code
             for-each byte encryptedByte in encrypted
                        decryptedByte <- encryptedByte - key with underflow
@@ -28,8 +26,9 @@ public class CaesarDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecor
         while ((c = encrypted.read()) != -1) {
             int value = c - key;
             while (value < 0)
-                value = Byte.MAX_VALUE + value + 1;
-            decrypted.write((byte)value);
+                value = EncryptionFunction.BYTE_MAX_VALUE + value + 1;
+            decrypted.write(value & (0xff));
         }
+        decrypted.close();
     }
 }

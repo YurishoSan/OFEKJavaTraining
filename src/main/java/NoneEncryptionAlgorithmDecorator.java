@@ -1,6 +1,4 @@
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by yurisho on 31/07/2016.
@@ -8,7 +6,7 @@ import java.io.IOException;
  * Preforms no encryption algorithm
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
 public class NoneEncryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator {
 
@@ -17,7 +15,7 @@ public class NoneEncryptionAlgorithmDecorator extends EncryptionAlgorithmDecorat
     }
 
     @Override
-    public void algorithm(FileInputStream original, FileOutputStream encrypted, byte key) throws IOException {
+    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException {
         /* algorithm pseudo code
             copy original file to encrypted file
          */
@@ -25,7 +23,8 @@ public class NoneEncryptionAlgorithmDecorator extends EncryptionAlgorithmDecorat
         int c;
 
         while ((c = original.read()) != -1) {
-            encrypted.write(c);
+            encrypted.write(c & (0xff));
         }
+        encrypted.close();
     }
 }

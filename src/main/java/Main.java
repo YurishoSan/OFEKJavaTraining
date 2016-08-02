@@ -7,7 +7,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.3
+ * @version 2.4
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -157,11 +157,11 @@ public class Main {
          */
 
         Random rnd = new Random();
-        byte key = 0;
+        char key = 0;
 
         switch (choice) {
             case ENCRYPT:
-                key = (byte)rnd.nextInt(128);
+                key = (char)rnd.nextInt(EncryptionFunction.BYTE_MAX_VALUE+1);
                 System.out.println("key: " + key);
                 break;
 
@@ -171,14 +171,14 @@ public class Main {
                 while(true) {
                     System.out.println("Enter key:");
                     try {
-                        key = Byte.parseByte(scanner.nextLine());
-                        if (key < 0)
-                            throw new IllegalArgumentException("key must be between 0 and 127");
+                        key = scanner.nextLine().charAt(0);
+                        if (key > EncryptionFunction.BYTE_MAX_VALUE)
+                            throw new IllegalArgumentException("key must be between 0 and " + EncryptionFunction.BYTE_MAX_VALUE);
 
                         break; //good key found, exit while loop
                     }
                     catch (IllegalArgumentException exp) {
-                        System.out.println("key must be a number in range 0-127, please try again:");
+                        System.out.println("key must be a number in range 0-" + EncryptionFunction.BYTE_MAX_VALUE + ", please try again:");
                     }
                 }
                 break;

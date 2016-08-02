@@ -10,16 +10,13 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 /**
- * Created by yurisho on 01/08/2016.
- *
- * Test CaesarDecryptionAlgorithmDecorator class
+ * Created by yurisho on 02/08/2016.
  */
-public class CaesarDecryptionAlgorithmDecoratorTest {
-
+public class MultiplicationDecryptionAlgorithmDecoratorTest {
     private File encrypted;
     private File decrypted;
-    private final char key = 10;
-    private CaesarDecryptionAlgorithmDecorator decryptionAlgorithm;
+    private final char key = 7;
+    private MultiplicationDecryptionAlgorithmDecorator decryptionAlgorithm;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -36,7 +33,7 @@ public class CaesarDecryptionAlgorithmDecoratorTest {
         encrypted = new File(testFilePath + ".encrypted");
         decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
-        decryptionAlgorithm = new CaesarDecryptionAlgorithmDecorator( new EncryptionAlgorithm() {
+        decryptionAlgorithm = new MultiplicationDecryptionAlgorithmDecorator( new EncryptionAlgorithm() {
             public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
 
             }
@@ -52,12 +49,13 @@ public class CaesarDecryptionAlgorithmDecoratorTest {
     @Test
     public void algorithmShouldCaesarDecryptTheFile() throws IOException {
         String fileContentDecrypted = "Hello, world!";
-        char[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x81,0x79,0x7c,0x76,0x6e,0x2b};
-        String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
+
+        char[] fileContentMultiplicationEncryptedByteArray = {0xd0,0xf2,0x38,0x38,0x56,0xb8,0x40,0xa6,0x56,0x74,0x38,0xe8,0x4a};
+        String fileContentMultiplicationEncrypted= new String(fileContentMultiplicationEncryptedByteArray);
 
         //write test data to file
         PrintWriter writer = new PrintWriter(encrypted, "UTF-8");
-        writer.println(fileContentCaesarEncrypted);
+        writer.println(fileContentMultiplicationEncrypted);
         writer.close();
 
         decryptionAlgorithm.algorithm(new FileReader(encrypted), new FileWriter(decrypted), key);
@@ -68,21 +66,8 @@ public class CaesarDecryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarDecryptTheFileWithUnderflow() throws IOException {
-        String fileContentDecrypted = "Hello, world!ÿ";
-        char[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x81,0x79,0x7c,0x76,0x6e,0x2b, 0x09};
-        String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
-
-        //write test data to file
-        PrintWriter writer = new PrintWriter(encrypted, "UTF-8");
-        writer.println(fileContentCaesarEncrypted);
-        writer.close();
-
-        decryptionAlgorithm.algorithm(new FileReader(encrypted), new FileWriter(decrypted), key);
-
-        BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
-
-        assertThat(decryptedReader.readLine().substring(0,14), is(fileContentDecrypted)); // use substring to remove extra bytes at end of file
+    public void FindDecryptionKeyShouldReturnTheRightKey() {
+        assertThat(MultiplicationDecryptionAlgorithmDecorator.FindDecryptionKey(key), is((char)183));
     }
 
 }

@@ -30,7 +30,7 @@ public class DecryptorTest {
     @Before
     public void setUpDecryptor() throws IOException {
         String testFilePath;
-        final byte key = 10;
+        final char key = 10;
         final String fileName = "text.txt";
 
         testFilePath = folder.getRoot().getCanonicalPath() + "\\" + fileName;

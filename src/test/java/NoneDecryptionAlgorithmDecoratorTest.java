@@ -15,11 +15,9 @@ import static org.junit.Assert.*;
  * Test NoneDecryptionAlgorithmDecorator class
  */
 public class NoneDecryptionAlgorithmDecoratorTest {
-    private final String fileContentDecrypted = "Hello, world!";
-
     private File encrypted;
     private File decrypted;
-    private final byte key = 10;
+    private final char key = 10;
     private NoneDecryptionAlgorithmDecorator decryptionAlgorithm;
 
     @Rule
@@ -38,7 +36,7 @@ public class NoneDecryptionAlgorithmDecoratorTest {
         decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
         decryptionAlgorithm = new NoneDecryptionAlgorithmDecorator( new EncryptionAlgorithm() {
-            public void algorithm(FileInputStream inputFile, FileOutputStream outputFile, byte key) throws IOException {
+            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
 
             }
         });
@@ -52,12 +50,14 @@ public class NoneDecryptionAlgorithmDecoratorTest {
 
     @Test
     public void algorithmShouldWriteTheFileAsIs() throws IOException {
+        String fileContentDecrypted = "Hello, world!";
+
         //write test data to file
         PrintWriter writer = new PrintWriter(encrypted, "UTF-8");
         writer.println(fileContentDecrypted);
         writer.close();
 
-        decryptionAlgorithm.algorithm(new FileInputStream(encrypted), new FileOutputStream(decrypted), key);
+        decryptionAlgorithm.algorithm(new FileReader(encrypted), new FileWriter(decrypted), key);
 
         BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
 

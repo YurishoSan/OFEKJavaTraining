@@ -1,9 +1,6 @@
 import lombok.*;
 
-import java.io.Closeable;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by yurisho on 20/07/2016.
@@ -11,7 +8,7 @@ import java.io.IOException;
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.5
+ * @version 3.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data public class Encryptor extends EncryptionFunction{
@@ -31,7 +28,7 @@ import java.io.IOException;
      * @param key the key for the encryption
      * @param algorithmType  Type of Algorithm to use
      */
-    public Encryptor(String filePath, byte key, AlgorithmTypeEnum algorithmType) {
+    public Encryptor(String filePath, char key, AlgorithmTypeEnum algorithmType) {
         super(filePath, key, algorithmType);
     }
 
@@ -51,7 +48,7 @@ import java.io.IOException;
      * prints that the file is being encrypted.
      * @since 2.5
      */
-    public void algorithm(FileInputStream original, FileOutputStream encrypted, byte key) throws IOException{
+    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException{
         /*
         algorithm pseudo code
             print("encryption simulation of file " + filePath)

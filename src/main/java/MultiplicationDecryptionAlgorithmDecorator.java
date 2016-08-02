@@ -1,6 +1,6 @@
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.io.*;
 
 /**
  * Created by yurisho on 02/08/2016.
@@ -16,13 +16,25 @@ public class MultiplicationDecryptionAlgorithmDecorator extends EncryptionAlgori
     }
 
     @Override
-    public void algorithm(FileInputStream original, FileOutputStream encrypted, byte key) throws IOException {
+    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException {
         /* algorithm pseudo code
-            decryptionKey <- FindDecryptionKey()
+            decryptionKey <- FindDecryptionKey(key)
 
             for-each byte encryptedByte in encrypted
                     decryptedByte <- encryptedByte MWO decryptionKey
                     write decryptedByte to file decrypted
         */
+
+        throw new NotImplementedException();
+    }
+
+    public static char FindDecryptionKey(char key) {
+        /* FindDecryptionKey pseudo code
+            for (i=0..Byte Max Value)
+                if (i MWO key = 1)
+                    return i
+         */
+
+        throw new NotImplementedException();
     }
 }

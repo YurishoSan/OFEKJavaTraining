@@ -12,15 +12,15 @@ import static org.junit.Assert.*;
 /**
  * Created by yurisho on 02/08/2016.
  *
- * Test NoneEncryptionAlgorithmDecorator class
+ * Test MultiplicationEncryptionAlgorithmDecorator class
  */
-public class NoneEncryptionAlgorithmDecoratorTest {
+public class MultiplicationEncryptionAlgorithmDecoratorTest {
     private File original;
     private File encrypted;
 
     private final char key = 10;
 
-    private NoneEncryptionAlgorithmDecorator encryptionAlgorithm;
+    private MultiplicationEncryptionAlgorithmDecorator encryptionAlgorithm;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -35,7 +35,7 @@ public class NoneEncryptionAlgorithmDecoratorTest {
         original = new File(testFilePath);
         encrypted = new File(testFilePath + ".encrypted");
 
-        encryptionAlgorithm = new NoneEncryptionAlgorithmDecorator( new EncryptionAlgorithm() {
+        encryptionAlgorithm = new MultiplicationEncryptionAlgorithmDecorator( new EncryptionAlgorithm() {
             public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
 
             }
@@ -48,7 +48,7 @@ public class NoneEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldWriteTheFileAsIs() throws IOException {
+    public void algorithmShouldMultiplicationEncryptTheFile() throws IOException {
         String fileContent = "Hello, world!";
 
         //write test data to file
@@ -56,10 +56,13 @@ public class NoneEncryptionAlgorithmDecoratorTest {
         writer.println(fileContent);
         writer.close();
 
+        char[] fileContentMultiplicationEncryptedByteArray = {0xd0,0xf2,0x38,0x38,0x56,0xb8,0x40,0xa6,0x56,0x74,0x38,0xe8,0x4a};
+        String fileContentMultiplicationEncrypted = new String(fileContentMultiplicationEncryptedByteArray);
+
         encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);
 
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 
-        assertThat(encryptedReader.readLine(), is(fileContent));
+        assertThat(encryptedReader.readLine().substring(0,13), is(fileContentMultiplicationEncrypted)); // use substring to remove extra bytes at end of file
     }
 }

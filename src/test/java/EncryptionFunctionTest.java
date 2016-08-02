@@ -4,9 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -34,7 +32,7 @@ public class EncryptionFunctionTest {
                 return null;
             }
 
-            public void algorithm(FileInputStream inputFile, FileOutputStream outputFile, byte key) throws IOException {
+            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
 
             }
         };

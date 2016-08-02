@@ -20,7 +20,7 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
     private File original;
     private File encrypted;
 
-    private final byte key = 10;
+    private final char key = 10;
 
     private CaesarEncryptionAlgorithmDecorator encryptionAlgorithm;
 
@@ -37,13 +37,8 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
         original = new File(testFilePath);
         encrypted = new File(testFilePath + ".encrypted");
 
-        //write test data to file
-        PrintWriter writer = new PrintWriter(original, "UTF-8");
-        writer.println(fileContent);
-        writer.close();
-
         encryptionAlgorithm = new CaesarEncryptionAlgorithmDecorator( new EncryptionAlgorithm() {
-            public void algorithm(FileInputStream inputFile, FileOutputStream outputFile, byte key) throws IOException {
+            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
 
             }
         });
@@ -56,14 +51,39 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
 
     @Test
     public void algorithmShouldCaesarEncryptTheFile() throws IOException {
-        byte[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x01,0x79,0x7c,0x76,0x6e,0x2b};
+        String fileContent = "Hello, world!";
+
+        //write test data to file
+        PrintWriter writer = new PrintWriter(original, "UTF-8");
+        writer.println(fileContent);
+        writer.close();
+
+        char[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x81,0x79,0x7c,0x76,0x6e,0x2b};
         String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
 
-        encryptionAlgorithm.algorithm(new FileInputStream(original), new FileOutputStream(encrypted), key);
+        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);
 
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 
         assertThat(encryptedReader.readLine().substring(0,13), is(fileContentCaesarEncrypted)); // use substring to remove extra bytes at end of file
     }
 
+    @Test
+    public void algorithmShouldCaesarEncryptTheFileWithOverflow() throws IOException {
+        String fileContent = "Hello, world!ÿ";
+
+        //write test data to file
+        PrintWriter writer = new PrintWriter(original, "UTF-8");
+        writer.println(fileContent);
+        writer.close();
+
+        char[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x81,0x79,0x7c,0x76,0x6e,0x2b, 0x09};
+        String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
+
+        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);
+
+        BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
+
+        assertThat(encryptedReader.readLine().substring(0,14), is(fileContentCaesarEncrypted)); // use substring to remove extra bytes at end of file
+    }
 }

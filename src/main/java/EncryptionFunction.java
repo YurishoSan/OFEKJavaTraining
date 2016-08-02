@@ -10,16 +10,20 @@ import lombok.*;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 2.5
+ * @version 3.0
  */
 @Data public abstract class EncryptionFunction implements Runnable, EncryptionAlgorithm{
+    // Constants -------------------------------------------------------------------------------------------------------
+    public static final int BYTE_MAX_VALUE = 255;
+
+
     // Attributes ------------------------------------------------------------------------------------------------------
     /**
      * path of file to preform function
      * @since 1.1
      */
     private String filePath;
-    private byte key;
+    private char key;
     private AlgorithmTypeEnum algorithmType;
 
     // Contors ---------------------------------------------------------------------------------------------------------
@@ -43,7 +47,7 @@ import lombok.*;
      * @param key the key for the encryption
      * @param algorithmType  Type of Algorithm to use
      */
-    public EncryptionFunction(String filePath, byte key, AlgorithmTypeEnum algorithmType) {
+    public EncryptionFunction(String filePath, char key, AlgorithmTypeEnum algorithmType) {
 
         setFilePath(filePath);
         setKey(key);
@@ -74,18 +78,18 @@ import lombok.*;
     /**
      * call algorithm function
      * @since 1.1
-     * @see #algorithm(FileInputStream, FileOutputStream, byte)
+     * @see #algorithm(FileInputStream, FileOutputStream, char)
      */
     public void run() {
         if (getFilePath().equals(""))
             return;
 
-        FileInputStream inputFile = null;
-        FileOutputStream outputFile = null;
+        FileReader inputFile = null;
+        FileWriter outputFile = null;
 
         try {
-            inputFile = new FileInputStream(getInputFileName());
-            outputFile = new FileOutputStream(getOutputFileName());
+            inputFile = new FileReader(getInputFileName());
+            outputFile = new FileWriter(getOutputFileName());
 
             algorithm(inputFile, outputFile, getKey());
 

@@ -12,15 +12,15 @@ import static org.junit.Assert.*;
 /**
  * Created by yurisho on 02/08/2016.
  *
- * Test NoneEncryptionAlgorithmDecorator class
+ * Test XorEncryptionAlgorithmDecorator class
  */
-public class NoneEncryptionAlgorithmDecoratorTest {
+public class XorEncryptionAlgorithmDecoratorTest {
     private File original;
     private File encrypted;
 
     private final char key = 10;
 
-    private NoneEncryptionAlgorithmDecorator encryptionAlgorithm;
+    private XorEncryptionAlgorithmDecorator encryptionAlgorithm;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -35,7 +35,7 @@ public class NoneEncryptionAlgorithmDecoratorTest {
         original = new File(testFilePath);
         encrypted = new File(testFilePath + ".encrypted");
 
-        encryptionAlgorithm = new NoneEncryptionAlgorithmDecorator( new EncryptionAlgorithm() {
+        encryptionAlgorithm = new XorEncryptionAlgorithmDecorator( new EncryptionAlgorithm() {
             public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
 
             }
@@ -48,7 +48,7 @@ public class NoneEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldWriteTheFileAsIs() throws IOException {
+    public void algorithmShouldCaesarEncryptTheFile() throws IOException {
         String fileContent = "Hello, world!";
 
         //write test data to file
@@ -56,10 +56,13 @@ public class NoneEncryptionAlgorithmDecoratorTest {
         writer.println(fileContent);
         writer.close();
 
+        char[] fileContentXorEncryptedByteArray = {0x42,0x6f,0x66,0x66,0x65,0x26,0x2a,0x7d,0x65,0x78,0x66,0x6e,0x2b};
+        String fileContentXorEncrypted = new String(fileContentXorEncryptedByteArray);
+
         encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);
 
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 
-        assertThat(encryptedReader.readLine(), is(fileContent));
+        assertThat(encryptedReader.readLine().substring(0,13), is(fileContentXorEncrypted)); // use substring to remove extra bytes at end of file
     }
 }
