@@ -18,7 +18,7 @@ public class NoneDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorat
 
     @Override
     public void algorithm(FileInputStream encrypted, FileOutputStream decrypted, byte key) throws IOException {
-        /* decrypt pseudo code
+        /* algorithm pseudo code
             copy encrypted file to decrypted file
          */
         super.algorithm(encrypted, decrypted, key);

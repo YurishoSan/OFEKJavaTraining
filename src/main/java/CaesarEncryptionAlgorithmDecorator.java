@@ -18,7 +18,7 @@ public class CaesarEncryptionAlgorithmDecorator extends EncryptionAlgorithmDecor
 
     @Override
     public void algorithm(FileInputStream original, FileOutputStream encrypted, byte key) throws IOException {
-        /* encrypt pseudo code
+        /* algorithm pseudo code
             for-each byte originalByte in original
                     encryptedByte <- originalByte + key with overflow
                     write encryptedByte to file encrypted
