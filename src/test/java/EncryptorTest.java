@@ -80,7 +80,7 @@ public class EncryptorTest {
             fail();
     }
 
-    @Test
+    /*@Test
     public void EncryptNoneShouldNotChangeTheFileContent() throws IOException {
         encryptor.setAlgorithmType(AlgorithmTypeEnum.NONE);
 
@@ -102,6 +102,6 @@ public class EncryptorTest {
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 
         assertThat(encryptedReader.readLine().substring(0,13), is(fileContentCaesarEncrypted)); // use substring to remove extra bytes at end of file
-    }
+    }*/
 
 }

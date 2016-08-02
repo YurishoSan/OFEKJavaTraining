@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
  * Test Decryptor class
  */
 public class DecryptorTest {
-    private final String fileContentDecrypted = "Hello, world!";
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -97,7 +96,7 @@ public class DecryptorTest {
             fail();
     }
 
-    @Test
+    /*@Test
     public void DecryptNoneShouldNotChangeTheFileContent() throws IOException {
         decryptor.setAlgorithmType(AlgorithmTypeEnum.NONE);
 
@@ -129,6 +128,6 @@ public class DecryptorTest {
         BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
 
         assertThat(decryptedReader.readLine().substring(0,13), is(fileContentDecrypted)); // use substring to remove extra bytes at end of file
-    }
+    }*/
 
 }
