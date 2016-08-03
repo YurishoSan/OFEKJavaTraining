@@ -1,3 +1,8 @@
+import encryption.AlgorithmTypeEnum;
+import encryption.Decryptor;
+import encryption.EncryptionFunction;
+import encryption.Encryptor;
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -29,12 +34,12 @@ public class Main {
     private static void PrintCredits() {
         /*
         PrintCredits pseudo code
-            print ("Encryptor program made by Yitzhak Goldstein @ OFEK for Atuda prep. training 2016.
+            print ("encryption.Encryptor program made by Yitzhak Goldstein @ OFEK for Atuda prep. training 2016.
                 This program encrypts and decrypts files.
             ")
          */
 
-        System.out.println("Encryptor program made by Yitzhak Goldstein @ OFEK for Atuda prep. training 2016.");
+        System.out.println("encryption.Encryptor program made by Yitzhak Goldstein @ OFEK for Atuda prep. training 2016.");
         System.out.println("This program encrypts and decrypts files.");
     }
 
@@ -225,10 +230,10 @@ public class Main {
 
             switch (choice)
                 case ENCRYPT:
-                    encryptionFunction <- new Encryptor()
+                    encryptionFunction <- new encryption.Encryptor()
                 break
                 case DECRYPT:
-                    encryptionFunction <- new Decryptor()
+                    encryptionFunction <- new encryption.Decryptor()
                 break
 
             SetFilePath(encryptionFunction)
