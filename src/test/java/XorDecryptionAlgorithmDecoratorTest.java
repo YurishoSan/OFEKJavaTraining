@@ -47,7 +47,7 @@ public class XorDecryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarDecryptTheFile() throws IOException {
+    public void algorithmShouldCaesarDecryptTheFile() throws IOException, IllegalKeyException {
         String fileContentDecrypted = "Hello, world!";
 
         char[] fileContentXorEncryptedByteArray = {0x42,0x6f,0x66,0x66,0x65,0x26,0x2a,0x7d,0x65,0x78,0x66,0x6e,0x2b};

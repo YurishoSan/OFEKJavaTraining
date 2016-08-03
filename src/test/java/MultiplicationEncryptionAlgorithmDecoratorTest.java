@@ -2,6 +2,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
@@ -24,6 +25,9 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+    @Rule
+    public ExpectedException exceptionGrabber = ExpectedException.none();
 
     @Before
     public void setUp() throws IOException {
@@ -48,7 +52,7 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldMultiplicationEncryptTheFile() throws IOException {
+    public void algorithmShouldMultiplicationEncryptTheFile() throws IOException, IllegalKeyException {
         String fileContent = "Hello, world!";
 
         //write test data to file
@@ -64,5 +68,17 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 
         assertThat(encryptedReader.readLine().substring(0,13), is(fileContentMultiplicationEncrypted)); // use substring to remove extra bytes at end of file
+    }
+
+    @Test
+    public void algorithmWithEvenKeyShouldThrowIllegalKeyException() throws IOException, IllegalKeyException {
+        exceptionGrabber.expect(IllegalKeyException.class);
+        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), (char)6);
+    }
+
+    @Test
+    public void algorithmWithZeroKeyShouldThrowIllegalKeyException() throws IOException, IllegalKeyException {
+        exceptionGrabber.expect(IllegalKeyException.class);
+        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), (char)0);
     }
 }

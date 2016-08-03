@@ -56,11 +56,13 @@ import java.io.*;
      * prints that the file is being encrypted.
      * @since 2.5
      */
-    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException{
+    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException, IllegalKeyException{
         /*
         algorithm pseudo code
             print("encryption simulation of file " + filePath)
          */
+        super.algorithm(original, encrypted, key);
+
         System.out.println("encryption simulation of file " + getFilePath());
     }
 }

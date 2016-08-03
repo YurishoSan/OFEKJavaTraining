@@ -26,7 +26,7 @@ public class NoneDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorat
      * @throws IOException if could not handle the files
      */
     @Override
-    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException {
+    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException, IllegalKeyException {
         /* algorithm pseudo code
             copy encrypted file to decrypted file
          */

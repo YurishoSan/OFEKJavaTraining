@@ -50,7 +50,7 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarEncryptTheFile() throws IOException {
+    public void algorithmShouldCaesarEncryptTheFile() throws IOException, IllegalKeyException {
         String fileContent = "Hello, world!";
 
         //write test data to file
@@ -69,7 +69,7 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarEncryptTheFileWithOverflow() throws IOException {
+    public void algorithmShouldCaesarEncryptTheFileWithOverflow() throws IOException, IllegalKeyException {
         String fileContent = "Hello, world!ÿ";
 
         //write test data to file

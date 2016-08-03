@@ -15,7 +15,7 @@ public abstract class EncryptionAlgorithmDecorator implements EncryptionAlgorith
         this.decoratedEncryptionAlgorithm = decoratedEncryptionAlgorithm;
     }
 
-    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException {
+    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException, IllegalKeyException {
         decoratedEncryptionAlgorithm.algorithm(original, encrypted, key);
     }
 }

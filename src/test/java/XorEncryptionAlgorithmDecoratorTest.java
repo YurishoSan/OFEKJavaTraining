@@ -48,7 +48,7 @@ public class XorEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarEncryptTheFile() throws IOException {
+    public void algorithmShouldCaesarEncryptTheFile() throws IOException, IllegalKeyException {
         String fileContent = "Hello, world!";
 
         //write test data to file

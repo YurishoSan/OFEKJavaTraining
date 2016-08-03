@@ -50,7 +50,7 @@ public class CaesarDecryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarDecryptTheFile() throws IOException {
+    public void algorithmShouldCaesarDecryptTheFile() throws IOException, IllegalKeyException {
         String fileContentDecrypted = "Hello, world!";
         char[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x81,0x79,0x7c,0x76,0x6e,0x2b};
         String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
@@ -68,7 +68,7 @@ public class CaesarDecryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarDecryptTheFileWithUnderflow() throws IOException {
+    public void algorithmShouldCaesarDecryptTheFileWithUnderflow() throws IOException, IllegalKeyException {
         String fileContentDecrypted = "Hello, world!ÿ";
         char[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x81,0x79,0x7c,0x76,0x6e,0x2b, 0x09};
         String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);

@@ -28,12 +28,16 @@ public class MultiplicationEncryptionAlgorithmDecorator extends EncryptionAlgori
      * @throws IOException if could not handle the files
      */
     @Override
-    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException {
+    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException, IllegalKeyException {
         /* algorithm pseudo code
             for-each byte originalByte in original
                     encryptedByte <- originalByte MWO key
                     write encryptedByte to file encrypted
         */
+        super.algorithm(original, encrypted, key);
+
+        if (key % 2 ==0 || key == 0) //key could cause loss of data
+            throw new IllegalKeyException("in multiplication algorithm, key must not be divisible by 2, or 0");
 
         int c;
 

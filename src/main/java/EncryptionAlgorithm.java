@@ -16,5 +16,5 @@ public interface EncryptionAlgorithm {
      * @param key key to use in the algorithm
      * @throws IOException if could not handle the files
      */
-    void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException;
+    void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException, IllegalKeyException;
 }

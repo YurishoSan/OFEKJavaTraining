@@ -2,6 +2,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
@@ -20,6 +21,9 @@ public class EncryptionFunctionTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    @Rule
+    public ExpectedException exceptionGrabber = ExpectedException.none();
+
     @Before
     public void setUpEncryptionFunction() {
         //build a generic encryptionFunction
@@ -30,10 +34,6 @@ public class EncryptionFunctionTest {
 
             protected String getOutputFileName() {
                 return null;
-            }
-
-            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
-
             }
         };
     }
@@ -68,4 +68,11 @@ public class EncryptionFunctionTest {
         assertThat(encryptionFunction.getFilePath(), is(folder.getRoot().getCanonicalPath() + "\\myFile.txt"));
     }
 
+    @Test
+    public void algorithmWithBigKeyShouldThrowIllegalKeyException() throws IOException, IllegalKeyException{
+        folder.newFile("myFile.txt");
+
+        exceptionGrabber.expect(IllegalKeyException.class);
+        encryptionFunction.algorithm(new FileReader(folder.getRoot().getCanonicalPath() + "\\myFile.txt"), new FileWriter(folder.getRoot().getCanonicalPath() + "\\myFile.txt"), (char) 256);
+    }
 }

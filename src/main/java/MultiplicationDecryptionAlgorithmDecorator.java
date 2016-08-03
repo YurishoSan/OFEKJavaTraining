@@ -27,7 +27,7 @@ public class MultiplicationDecryptionAlgorithmDecorator extends EncryptionAlgori
      * @throws IOException if could not handle the files
      */
     @Override
-    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException {
+    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException, IllegalKeyException {
         /* algorithm pseudo code
             decryptionKey <- FindDecryptionKey(key)
 
@@ -35,6 +35,12 @@ public class MultiplicationDecryptionAlgorithmDecorator extends EncryptionAlgori
                     decryptedByte <- encryptedByte MWO decryptionKey
                     write decryptedByte to file decrypted
         */
+
+        super.algorithm(encrypted, decrypted, key);
+
+        if (key % 2 ==0 || key == 0) //key could cause loss of data
+            throw new IllegalKeyException("in multiplication algorithm, key must not be divisible by 2, or 0");
+
         char decryptionKey;
 
         try {

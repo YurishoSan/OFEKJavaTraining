@@ -25,12 +25,13 @@ public class CaesarDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecor
      * @throws IOException if could not handle the files
      */
     @Override
-    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException {
+    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException, IllegalKeyException {
         /* algorithm pseudo code
             for-each byte encryptedByte in encrypted
                        decryptedByte <- encryptedByte - key with underflow
                        write decryptedByte to file decrypted
         */
+        super.algorithm(encrypted, decrypted, key);
 
         int c;
 

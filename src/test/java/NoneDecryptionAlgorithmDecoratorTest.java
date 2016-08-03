@@ -49,7 +49,7 @@ public class NoneDecryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldWriteTheFileAsIs() throws IOException {
+    public void algorithmShouldWriteTheFileAsIs() throws IOException, IllegalKeyException {
         String fileContentDecrypted = "Hello, world!";
 
         //write test data to file

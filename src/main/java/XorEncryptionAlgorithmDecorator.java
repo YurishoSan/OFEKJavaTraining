@@ -28,12 +28,13 @@ public class XorEncryptionAlgorithmDecorator  extends EncryptionAlgorithmDecorat
      * @throws IOException if could not handle the files
      */
     @Override
-    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException {
+    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException, IllegalKeyException {
         /* algorithm pseudo code
             for-each byte originalByte in original
                     encryptedByte <- originalByte ^ key
                     write encryptedByte to file encrypted
          */
+        super.algorithm(original, encrypted, key);
 
         int c;
 
