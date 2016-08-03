@@ -1,8 +1,10 @@
 package encryption.algorithms;
 
+import encryption.design.decorator.EncryptionAlgorithm;
+import encryption.design.decorator.EncryptionAlgorithmDecorator;
 import encryption.EncryptionFunction;
-import exception.DecryptionKeyNotFoundException;
-import exception.IllegalKeyException;
+import encryption.exception.DecryptionKeyNotFoundException;
+import encryption.exception.IllegalKeyException;
 import utils.MathUtils;
 
 import java.io.*;

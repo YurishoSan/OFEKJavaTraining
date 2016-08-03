@@ -1,9 +1,9 @@
-package exception;
+package encryption.exception;
 
 /**
  * Created by yurisho on 03/08/2016.
  *
- * exception in case the key is illegal
+ * encryption.exception in case the key is illegal
  */
 public class IllegalKeyException extends EncryptionException {
     public IllegalKeyException() {

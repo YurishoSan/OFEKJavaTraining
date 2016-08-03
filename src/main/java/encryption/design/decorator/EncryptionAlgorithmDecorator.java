@@ -1,13 +1,13 @@
-package encryption.algorithms;
+package encryption.design.decorator;
 
-import exception.IllegalKeyException;
+import encryption.exception.IllegalKeyException;
 
 import java.io.*;
 
 /**
  * Created by yurisho on 31/07/2016.
  *
- * Decorator for encryption.algorithms.EncryptionAlgorithm interface
+ * Decorator for encryption.design.decorator.EncryptionAlgorithm interface
  *
  * @author Yitzhak Goldstein
  * @version 1.1

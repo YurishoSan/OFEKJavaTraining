@@ -3,8 +3,8 @@ package encryption;
 import java.io.*;
 import java.util.Arrays;
 
-import encryption.algorithms.EncryptionAlgorithm;
-import exception.IllegalKeyException;
+import encryption.design.decorator.EncryptionAlgorithm;
+import encryption.exception.IllegalKeyException;
 import lombok.*;
 import utils.FileUtils;
 

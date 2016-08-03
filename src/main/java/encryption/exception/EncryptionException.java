@@ -1,4 +1,4 @@
-package exception;
+package encryption.exception;
 
 /**
  * Created by yurisho on 03/08/2016.

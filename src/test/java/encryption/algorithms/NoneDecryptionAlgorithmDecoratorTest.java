@@ -1,8 +1,7 @@
 package encryption.algorithms;
 
-import encryption.algorithms.EncryptionAlgorithm;
-import encryption.algorithms.NoneDecryptionAlgorithmDecorator;
-import exception.IllegalKeyException;
+import encryption.design.decorator.EncryptionAlgorithm;
+import encryption.exception.IllegalKeyException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

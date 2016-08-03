@@ -1,6 +1,6 @@
 package encryption;
 
-import exception.IllegalKeyException;
+import encryption.exception.IllegalKeyException;
 import lombok.*;
 
 import java.io.*;

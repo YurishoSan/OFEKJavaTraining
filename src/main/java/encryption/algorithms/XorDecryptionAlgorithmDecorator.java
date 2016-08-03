@@ -1,6 +1,8 @@
 package encryption.algorithms;
 
-import exception.IllegalKeyException;
+import encryption.design.decorator.EncryptionAlgorithm;
+import encryption.design.decorator.EncryptionAlgorithmDecorator;
+import encryption.exception.IllegalKeyException;
 
 import java.io.*;
 
@@ -12,7 +14,7 @@ import java.io.*;
  * @author Yitzhak Goldstein
  * @version 1.0
  */
-public class XorDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator{
+public class XorDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator {
 
     /**
      * decorator contor

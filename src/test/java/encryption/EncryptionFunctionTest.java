@@ -1,7 +1,6 @@
 package encryption;
 
-import encryption.EncryptionFunction;
-import exception.IllegalKeyException;
+import encryption.exception.IllegalKeyException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
