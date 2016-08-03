@@ -32,11 +32,19 @@ import java.io.*;
         super(filePath, key, algorithmType);
     }
 
+    /**
+     * gets the path of the file to encrypt
+     * @return full path of the file to encrypt
+     */
     @Override
     protected String getInputFileName() {
         return getFilePath();
     }
 
+    /**
+     * gets the path of the file to write the encrypted output to
+     * @return full path of the encrypted file
+     */
     @Override
     protected String getOutputFileName() {
         return getFilePath() + ".encrypted";

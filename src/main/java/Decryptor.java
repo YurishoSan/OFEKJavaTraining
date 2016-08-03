@@ -52,11 +52,19 @@ import java.io.*;
             super.setFilePath("");
     }
 
+    /**
+     * gets the path of the file to decrypt
+     * @return full path of the file to decrypt
+     */
     @Override
     protected String getInputFileName() {
         return getFilePath();
     }
 
+    /**
+     * gets the path of the file to write the decrypted output to
+     * @return full path of the decrypted file
+     */
     @Override
     protected String getOutputFileName() {
         String originalFilePath;

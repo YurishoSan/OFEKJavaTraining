@@ -6,6 +6,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileUtils {
+    /**
+     * check if the file name is valid
+     * @param file file name to check
+     * @return is file name valid
+     */
     public static boolean isFilenameValid(String file) {
         File f = new File(file);
         try {

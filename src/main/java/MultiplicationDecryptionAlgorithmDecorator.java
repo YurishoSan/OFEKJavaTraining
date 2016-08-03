@@ -11,10 +11,21 @@ import java.io.*;
  * @version 1.0
  */
 public class MultiplicationDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator {
-    public MultiplicationDecryptionAlgorithmDecorator(EncryptionAlgorithm decoratedEncryptionAlgorithm) {
-        super(decoratedEncryptionAlgorithm);
+    /**
+     * decorator contor
+     * @param decoratedDecryptionAlgorithm algorithm to decorate
+     */
+    public MultiplicationDecryptionAlgorithmDecorator(EncryptionAlgorithm decoratedDecryptionAlgorithm) {
+        super(decoratedDecryptionAlgorithm);
     }
 
+    /**
+     * apply multiplication algorithm for decryption on the encrypted and write the result to the decrypted
+     * @param encrypted file to apply the algorithm to
+     * @param decrypted file to write the result into
+     * @param key key to use in the algorithm
+     * @throws IOException if could not handle the files
+     */
     @Override
     public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException {
         /* algorithm pseudo code
@@ -42,6 +53,14 @@ public class MultiplicationDecryptionAlgorithmDecorator extends EncryptionAlgori
         }
     }
 
+    /**
+     * find the decryption key coresponding to the key.
+     * the decryption key is any number in range 0-255 that satisfies the condition that:
+     * decryption_key MWO key = 1
+     * @param key key to find corresponding decryption key
+     * @return  the decryption key
+     * @throws DecryptionKeyNotFoundException if no such decryption key is found in the 0-255 range
+     */
     public static char FindDecryptionKey(char key) throws DecryptionKeyNotFoundException {
         /* FindDecryptionKey pseudo code
             for (i=0..Byte Max Value)
