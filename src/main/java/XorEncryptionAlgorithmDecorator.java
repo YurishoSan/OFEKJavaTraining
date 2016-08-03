@@ -23,6 +23,12 @@ public class XorEncryptionAlgorithmDecorator  extends EncryptionAlgorithmDecorat
                     write encryptedByte to file encrypted
          */
 
-        throw new NotImplementedException();
+        int c;
+
+        while ((c = original.read()) != -1) {
+            int value = c ^ key;
+            encrypted.write(value & (0xff));
+        }
+        encrypted.close();
     }
 }

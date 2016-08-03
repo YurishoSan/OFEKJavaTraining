@@ -18,7 +18,7 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
     private File original;
     private File encrypted;
 
-    private final char key = 10;
+    private final char key = 7;
 
     private MultiplicationEncryptionAlgorithmDecorator encryptionAlgorithm;
 
@@ -56,7 +56,7 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
         writer.println(fileContent);
         writer.close();
 
-        char[] fileContentMultiplicationEncryptedByteArray = {0xd0,0xf2,0x38,0x38,0x56,0xb8,0x40,0xa6,0x56,0x74,0x38,0xe8,0x4a};
+        char[] fileContentMultiplicationEncryptedByteArray = {0xf8,0xc3,0xf4,0xf4,0x09,0x34,0xe0,0x41,0x09,0x1e,0xf4,0xbc,0xe7};
         String fileContentMultiplicationEncrypted = new String(fileContentMultiplicationEncryptedByteArray);
 
         encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);

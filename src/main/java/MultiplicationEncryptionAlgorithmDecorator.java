@@ -23,6 +23,12 @@ public class MultiplicationEncryptionAlgorithmDecorator extends EncryptionAlgori
                     write encryptedByte to file encrypted
         */
 
-        throw new NotImplementedException();
+        int c;
+
+        while ((c = original.read()) != -1) {
+            int value = MathUtils.MWO((char)c, key);
+            encrypted.write(value & (0xff));
+        }
+        encrypted.close();
     }
 }

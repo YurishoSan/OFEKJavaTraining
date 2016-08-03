@@ -20,6 +20,7 @@ public class MathUtils {
             return result
          */
 
-        throw new NotImplementedException();
+        char result = (char)(byte)(n1 * n2); // convert to byte to take care of overflow. then to char to return it.
+        return result;
     }
 }
