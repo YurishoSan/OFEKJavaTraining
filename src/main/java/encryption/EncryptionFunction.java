@@ -2,6 +2,7 @@ package encryption;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Observable;
 
 import encryption.design.decorator.EncryptionAlgorithm;
 import encryption.exception.IllegalKeyException;
