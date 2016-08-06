@@ -1,7 +1,6 @@
 package encryption.algorithms;
 
 import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.design.decorator.EncryptionAlgorithmDecorator;
 import encryption.EncryptionFunction;
 import encryption.exception.DecryptionKeyNotFoundException;
 import encryption.exception.IllegalKeyException;
@@ -15,9 +14,9 @@ import java.io.*;
  * Preforms Multiplication decryption algorithm
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
-public class MultiplicationDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator {
+public class MultiplicationDecryptionAlgorithmDecorator extends ObservableEncryptionAlgorithmDecorator {
     /**
      * decorator contor
      * @param decoratedDecryptionAlgorithm algorithm to decorate

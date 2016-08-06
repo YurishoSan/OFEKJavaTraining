@@ -1,5 +1,6 @@
-package encryption.design.decorator;
+package encryption.algorithms;
 
+import encryption.design.decorator.EncryptionAlgorithm;
 import encryption.exception.IllegalKeyException;
 
 import java.io.*;

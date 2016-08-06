@@ -1,5 +1,6 @@
 package encryption.design.observer;
 
+import encryption.exception.EndEventCalledBeforeStartEventException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +65,7 @@ public class ObservableFunctionTest {
     }
 
     @Test
-    public void notifyObserversToFunctionStartShouldTriggerTheObserverUpdateFunction() {
+    public void notifyObserversToFunctionStartShouldTriggerTheObserverUpdateFunction() throws EndEventCalledBeforeStartEventException {
         Observer observer = Mockito.mock(Observer.class);
         observableFunction.register(observer, EventTypesEnum.FUNCTION_START);
         observableFunction.notifyObservers(EventTypesEnum.FUNCTION_START);
@@ -72,7 +73,7 @@ public class ObservableFunctionTest {
     }
 
     @Test
-    public void notifyObserversToFunctionEndShouldTriggerTheObserverUpdateFunction() {
+    public void notifyObserversToFunctionEndShouldTriggerTheObserverUpdateFunction() throws EndEventCalledBeforeStartEventException{
         Observer observer = Mockito.mock(Observer.class);
         observableFunction.register(observer, EventTypesEnum.FUNCTION_END);
         observableFunction.notifyObservers(EventTypesEnum.FUNCTION_END);

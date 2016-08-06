@@ -1,5 +1,6 @@
 package encryption.design.observer;
 
+import encryption.exception.EndEventCalledBeforeStartEventException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,7 +33,7 @@ public class ObservableFunctionSubscriberTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Before
-    public void setUp() {
+    public void setUp() throws EndEventCalledBeforeStartEventException {
         eventStartCalled = false;
         eventEndCalled = false;
         observableFunctionSubscriber = new ObservableFunctionSubscriber() {
@@ -54,7 +55,7 @@ public class ObservableFunctionSubscriberTest {
             }
         }).when(observable).notifyObservers(EventTypesEnum.FUNCTION_END);
 
-        observableFunctionSubscriber.setObservable(observable);
+        //observableFunctionSubscriber.setObservable(observable);
     }
 
     @After
@@ -63,7 +64,7 @@ public class ObservableFunctionSubscriberTest {
     }
 
     @Test
-    public void WhenObservableNotifiesTheObserverBeingRegisteredForFunctionStartUpdateShouldRunEventStart() {
+    public void WhenObservableNotifiesTheObserverBeingRegisteredForFunctionStartUpdateShouldRunEventStart() throws EndEventCalledBeforeStartEventException {
         observable.register(observableFunctionSubscriber, EventTypesEnum.FUNCTION_START);
 
         doAnswer(new Answer() {
@@ -79,7 +80,7 @@ public class ObservableFunctionSubscriberTest {
     }
 
     @Test
-    public void WhenObservableNotifiesTheObserverBeingRegisteredForFunctionEndUpdateShouldRunEventEnd() {
+    public void WhenObservableNotifiesTheObserverBeingRegisteredForFunctionEndUpdateShouldRunEventEnd() throws EndEventCalledBeforeStartEventException {
         observable.register(observableFunctionSubscriber, EventTypesEnum.FUNCTION_END);
 
         doAnswer(new Answer() {

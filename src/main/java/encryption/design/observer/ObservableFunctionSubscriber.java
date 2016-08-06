@@ -1,5 +1,7 @@
 package encryption.design.observer;
 
+import encryption.exception.EndEventCalledBeforeStartEventException;
+
 /**
  * a class implementing the Observer contract
  *
@@ -8,7 +10,7 @@ package encryption.design.observer;
 public abstract class ObservableFunctionSubscriber implements Observer {
     private Observable observable;
 
-    public final void update(EventTypesEnum eventType) {
+    public final void update(EventTypesEnum eventType) throws EndEventCalledBeforeStartEventException {
         switch(eventType) {
             case FUNCTION_START:
                 startEvent();
@@ -27,5 +29,5 @@ public abstract class ObservableFunctionSubscriber implements Observer {
     public final Observable getObservable() { return observable; }
 
     public abstract void startEvent();
-    public abstract void endEvent();
+    public abstract void endEvent() throws EndEventCalledBeforeStartEventException;
 }

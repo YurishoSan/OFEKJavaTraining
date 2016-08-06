@@ -1,5 +1,7 @@
 package encryption.design.observer;
 
+import encryption.exception.EndEventCalledBeforeStartEventException;
+
 /**
  * and Observer object
  *
@@ -8,7 +10,7 @@ package encryption.design.observer;
 public interface Observer {
 
     //method to update the observer, used by subject
-    void update(EventTypesEnum eventType);
+    void update(EventTypesEnum eventType) throws EndEventCalledBeforeStartEventException;
 
     //attach with subject to observe
     void setObservable(Observable sub);

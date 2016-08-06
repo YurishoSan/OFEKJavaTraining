@@ -1,7 +1,6 @@
 package encryption.algorithms;
 
 import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.design.decorator.EncryptionAlgorithmDecorator;
 import encryption.exception.IllegalKeyException;
 
 import java.io.*;
@@ -12,9 +11,9 @@ import java.io.*;
  * Preforms XOR decryption algorithm
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
-public class XorDecryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator {
+public class XorDecryptionAlgorithmDecorator extends ObservableEncryptionAlgorithmDecorator {
 
     /**
      * decorator contor

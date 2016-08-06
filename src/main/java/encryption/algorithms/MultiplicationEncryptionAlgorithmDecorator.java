@@ -1,7 +1,6 @@
 package encryption.algorithms;
 
 import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.design.decorator.EncryptionAlgorithmDecorator;
 import encryption.exception.IllegalKeyException;
 import utils.MathUtils;
 
@@ -13,9 +12,9 @@ import java.io.*;
  * Preforms Multiplication encryption algorithm
  *
  * @author Yitzhak Goldstein
- * @version 1.0
+ * @version 1.1
  */
-public class MultiplicationEncryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator {
+public class MultiplicationEncryptionAlgorithmDecorator extends ObservableEncryptionAlgorithmDecorator {
 
     /**
      * decorator contor

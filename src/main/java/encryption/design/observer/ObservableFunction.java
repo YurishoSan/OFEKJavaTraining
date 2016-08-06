@@ -1,5 +1,6 @@
 package encryption.design.observer;
 
+import encryption.exception.EndEventCalledBeforeStartEventException;
 import lombok.Data;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -58,7 +59,7 @@ public class ObservableFunction implements Observable {
         }
     }
 
-    public void notifyObservers(EventTypesEnum eventType) {
+    public void notifyObservers(EventTypesEnum eventType) throws EndEventCalledBeforeStartEventException {
         List<Observer> observersLocal;
         //synchronization is used to make sure any observer registered after message is received is not notified
         synchronized (MUTEX) {

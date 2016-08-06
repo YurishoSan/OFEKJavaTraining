@@ -1,7 +1,6 @@
 package encryption.algorithms;
 
 import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.design.decorator.EncryptionAlgorithmDecorator;
 import encryption.EncryptionFunction;
 import encryption.exception.IllegalKeyException;
 
@@ -13,9 +12,9 @@ import java.io.*;
  * Preforms caesar encryption algorithm
  *
  * @author Yitzhak Goldstein
- * @version 1.1
+ * @version 1.2
  */
-public class CaesarEncryptionAlgorithmDecorator extends EncryptionAlgorithmDecorator {
+public class CaesarEncryptionAlgorithmDecorator extends ObservableEncryptionAlgorithmDecorator {
 
     /**
      * decorator contor
