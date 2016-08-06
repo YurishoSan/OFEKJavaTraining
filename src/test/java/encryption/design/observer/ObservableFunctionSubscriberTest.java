@@ -72,7 +72,7 @@ public class ObservableFunctionSubscriberTest {
                 observableFunctionSubscriber.update(EventTypesEnum.FUNCTION_START);
                 return null;
             }
-        }).when(observableFunctionSubscriber.getObservable()).notifyObservers(EventTypesEnum.FUNCTION_START);
+        }).when(observable).notifyObservers(EventTypesEnum.FUNCTION_START);
 
         observable.notifyObservers(EventTypesEnum.FUNCTION_START);
 
@@ -88,7 +88,7 @@ public class ObservableFunctionSubscriberTest {
                 observableFunctionSubscriber.update(EventTypesEnum.FUNCTION_END);
                 return null;
             }
-        }).when(observableFunctionSubscriber.getObservable()).notifyObservers(EventTypesEnum.FUNCTION_END);
+        }).when(observable).notifyObservers(EventTypesEnum.FUNCTION_END);
 
         observable.notifyObservers(EventTypesEnum.FUNCTION_END);
 

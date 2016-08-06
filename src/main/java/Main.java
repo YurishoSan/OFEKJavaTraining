@@ -199,8 +199,18 @@ public class Main {
      */
     private static void SetAlgoritmType(EncryptionFunction encryptionFunction, AlgorithmTypeEnum algorithmType) {
          /*
-        SetAlgoritmType pseudo code
-            encryptionFunction.setAlgorithmType(algorithmType)
+        SetAlgorithmType pseudo code
+            do
+                Output ("Please choose algorithm:
+                    0) [N]one
+                    1) [C]aesar
+                    2) [X]or
+                    3) [M]ultiplication
+                 ")
+                 choice <- input()
+            while (choice != 0..3 or N,C,X,M or n,c,x,m)
+
+            decorate the algorithm with the appropriate decorator
         */
          encryptionFunction.setAlgorithmType(algorithmType);
     }
@@ -238,9 +248,12 @@ public class Main {
 
             SetFilePath(encryptionFunction)
             SetKey(encryptionFunction, choice)
-            SetAlgorithmType(encryptionFunction, CAESAR)
+            observableDecoratedEncryptionFunction <- SetAlgorithmType(encryptionFunction, choice)
 
-            encryptionFunction.run();
+            add EncryptionEventListener to observableDecoratedEncryptionFunction
+
+            try decoratedEncryptionFunction.run(),
+                and in case of exception print exception info
         */
 
         EncryptionFunction encryptionFunction; // object for encryption function to preform

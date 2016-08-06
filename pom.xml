@@ -6,7 +6,7 @@
 
     <groupId>com.goldstein</groupId>
     <artifactId>encryptor</artifactId>
-    <version>0.4.8</version>
+    <version>0.4.9</version>
 
     <dependencies>
         <dependency>
