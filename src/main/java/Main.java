@@ -1,8 +1,12 @@
-import encryption.AlgorithmTypeEnum;
-import encryption.Decryptor;
-import encryption.EncryptionFunction;
-import encryption.Encryptor;
+import encryption.*;
+import encryption.algorithms.*;
+import encryption.design.decorator.BasicAlgorithm;
+import encryption.design.observer.EventTypesEnum;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -12,7 +16,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 2.4
+ * @version 3.0
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -167,22 +171,25 @@ public class Main {
         switch (choice) {
             case ENCRYPT:
                 key = (char)rnd.nextInt(EncryptionFunction.BYTE_MAX_VALUE+1);
-                System.out.println("key: " + key);
+                System.out.println("key: " + (int)key);
                 break;
 
             case DECRYPT:
-                Scanner scanner = new Scanner(System.in);
-
+                Scanner scanner;
                 while(true) {
                     System.out.println("Enter key:");
                     try {
-                        key = scanner.nextLine().charAt(0);
+                        scanner = new Scanner(System.in);
+                        key = (char)scanner.nextInt();
                         if (key > EncryptionFunction.BYTE_MAX_VALUE)
                             throw new IllegalArgumentException("key must be between 0 and " + EncryptionFunction.BYTE_MAX_VALUE);
 
                         break; //good key found, exit while loop
                     }
                     catch (IllegalArgumentException exp) {
+                        System.out.println("key must be a number in range 0-" + EncryptionFunction.BYTE_MAX_VALUE + ", please try again:");
+                    }
+                    catch (InputMismatchException exp) {
                         System.out.println("key must be a number in range 0-" + EncryptionFunction.BYTE_MAX_VALUE + ", please try again:");
                     }
                 }
@@ -197,7 +204,7 @@ public class Main {
      *
      * @since 2.3
      */
-    private static void SetAlgoritmType(EncryptionFunction encryptionFunction, AlgorithmTypeEnum algorithmType) {
+    private static ObservableEncryptionAlgorithmDecorator SetAlgorithm(EncryptionFunction encryptionFunction, ChoiceEnum function) {
          /*
         SetAlgorithmType pseudo code
             do
@@ -212,7 +219,46 @@ public class Main {
 
             decorate the algorithm with the appropriate decorator
         */
-         encryptionFunction.setAlgorithmType(algorithmType);
+        char choice;
+        Scanner reader; // input reader
+
+        do {
+            System.out.println("Please choose algorithm:");
+            System.out.println("\t0) [N]one");
+            System.out.println("\t1) [C]aesar");
+            System.out.println("\t2) [X]or");
+            System.out.println("\t3) [M]ultiplication");
+
+            reader = new Scanner(System.in);
+            choice = reader.next().charAt(0);
+        } while ((choice < '0' || choice > '3')&&
+                choice != 'N' && choice != 'C' && choice != 'X' && choice != 'M' &&
+                choice != 'n' && choice != 'c' && choice != 'x' && choice != 'm');
+
+        switch (function) {
+            case ENCRYPT:
+                if (choice == '0' || choice == 'N' || choice == 'n')
+                    encryptionFunction.setAlgorithm(new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm()));
+                if (choice == '1' || choice == 'C' || choice == 'c')
+                    encryptionFunction.setAlgorithm(new CaesarEncryptionAlgorithmDecorator(new BasicAlgorithm()));
+                if (choice == '2' || choice == 'X' || choice == 'x')
+                    encryptionFunction.setAlgorithm(new XorEncryptionAlgorithmDecorator(new BasicAlgorithm()));
+                if (choice == '3' || choice == 'M' || choice == 'm')
+                    encryptionFunction.setAlgorithm(new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm()));
+                break;
+            case DECRYPT:
+                if (choice == '0' || choice == 'N' || choice == 'n')
+                    encryptionFunction.setAlgorithm(new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+                if (choice == '1' || choice == 'C' || choice == 'c')
+                    encryptionFunction.setAlgorithm(new CaesarDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+                if (choice == '2' || choice == 'X' || choice == 'x')
+                    encryptionFunction.setAlgorithm(new XorDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+                if (choice == '3' || choice == 'M' || choice == 'm')
+                    encryptionFunction.setAlgorithm(new MultiplicationDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+                break;
+        }
+
+        return null;
     }
 
     /**
@@ -248,9 +294,7 @@ public class Main {
 
             SetFilePath(encryptionFunction)
             SetKey(encryptionFunction, choice)
-            observableDecoratedEncryptionFunction <- SetAlgorithmType(encryptionFunction, choice)
-
-            add EncryptionEventListener to observableDecoratedEncryptionFunction
+            SetAlgorithm(encryptionFunction, choice)
 
             try decoratedEncryptionFunction.run(),
                 and in case of exception print exception info
@@ -276,7 +320,11 @@ public class Main {
 
         SetFilePath(encryptionFunction);
         SetKey(encryptionFunction, choice);
-        SetAlgoritmType(encryptionFunction, AlgorithmTypeEnum.CAESAR);
+        SetAlgorithm(encryptionFunction, choice);
+
+        EncryptionEventListener encryptionEventListener = new EncryptionEventListener(Clock.systemUTC());
+        encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_START);
+        encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_END);
 
         encryptionFunction.run();
 

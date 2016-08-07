@@ -1,5 +1,6 @@
 package encryption;
 
+import encryption.algorithms.ObservableEncryptionAlgorithmDecorator;
 import encryption.exception.IllegalKeyException;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.io.*;
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 3.0
+ * @version 4.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data public class Encryptor extends EncryptionFunction{
@@ -29,10 +30,10 @@ import java.io.*;
      * @since 1.0
      * @param filePath path of file to encrypt
      * @param key the key for the encryption
-     * @param algorithmType  Type of Algorithm to use
+     * @param algorithm  Type of Algorithm to use
      */
-    public Encryptor(String filePath, char key, AlgorithmTypeEnum algorithmType) {
-        super(filePath, key, algorithmType);
+    public Encryptor(String filePath, char key, ObservableEncryptionAlgorithmDecorator algorithm) {
+        super(filePath, key, algorithm);
     }
 
     /**
@@ -51,21 +52,5 @@ import java.io.*;
     @Override
     protected String getOutputFileName() {
         return getFilePath() + ".encrypted";
-    }
-
-    // Methods ---------------------------------------------------------------------------------------------------------
-    /**
-     * encrypt the file.
-     * prints that the file is being encrypted.
-     * @since 2.5
-     */
-    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException, IllegalKeyException {
-        /*
-        algorithm pseudo code
-            print("encryption simulation of file " + filePath)
-         */
-        super.algorithm(original, encrypted, key);
-
-        System.out.println("encryption simulation of file " + getFilePath());
     }
 }

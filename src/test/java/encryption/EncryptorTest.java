@@ -1,6 +1,8 @@
 package encryption;
 
 import encryption.Encryptor;
+import encryption.algorithms.NoneEncryptionAlgorithmDecorator;
+import encryption.design.decorator.BasicAlgorithm;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,7 +49,7 @@ public class EncryptorTest {
         writer.println(fileContent);
         writer.close();
 
-        encryptor = new Encryptor(testFilePath, key, AlgorithmTypeEnum.NONE);
+        encryptor = new Encryptor(testFilePath, key, new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm()));
     }
 
     @Before
@@ -65,12 +67,6 @@ public class EncryptorTest {
     public void cleanUpStreams() {
         System.setOut(null);
         System.setErr(null);
-    }
-
-    @Test
-    public void preformFunctionShouldWriteToScreen() {
-        encryptor.run();
-        assertThat(outContent.toString(), is("encryption simulation of file " + encryptor.getFilePath() + "\r\n"));
     }
 
     @Test

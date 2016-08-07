@@ -1,10 +1,14 @@
 package encryption;
 
 import java.io.*;
+import java.time.Clock;
 import java.util.Arrays;
-import java.util.Observable;
 
-import encryption.design.decorator.EncryptionAlgorithm;
+import encryption.algorithms.NoneEncryptionAlgorithmDecorator;
+import encryption.algorithms.ObservableEncryptionAlgorithmDecorator;
+import encryption.design.decorator.BasicAlgorithm;
+import encryption.design.observer.EventTypesEnum;
+import encryption.exception.EndEventCalledBeforeStartEventException;
 import encryption.exception.IllegalKeyException;
 import lombok.*;
 import utils.FileUtils;
@@ -15,9 +19,9 @@ import utils.FileUtils;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 3.0
+ * @version 4.0
  */
-@Data public abstract class EncryptionFunction implements Runnable, EncryptionAlgorithm {
+@Data public abstract class EncryptionFunction implements Runnable {
     // Constants -------------------------------------------------------------------------------------------------------
     public static final int BYTE_MAX_VALUE = 255;
 
@@ -29,8 +33,7 @@ import utils.FileUtils;
      */
     private String filePath;
     private char key;
-    private AlgorithmTypeEnum algorithmType;
-
+    private ObservableEncryptionAlgorithmDecorator algorithm;
     // Contors ---------------------------------------------------------------------------------------------------------
 
     /**
@@ -42,7 +45,7 @@ import utils.FileUtils;
     public EncryptionFunction() {
         filePath = "";
         key = 0;
-        algorithmType = AlgorithmTypeEnum.NONE;
+        algorithm = new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm());
     }
 
     /**
@@ -50,13 +53,13 @@ import utils.FileUtils;
      * @since 1.0
      * @param filePath path of file to preform function
      * @param key the key for the encryption
-     * @param algorithmType  Type of Algorithm to use
+     * @param algorithm Type of Algorithm to use
      */
-    public EncryptionFunction(String filePath, char key, AlgorithmTypeEnum algorithmType) {
+    public EncryptionFunction(String filePath, char key, ObservableEncryptionAlgorithmDecorator algorithm) {
 
         setFilePath(filePath);
         setKey(key);
-        setAlgorithmType(algorithmType);
+        setAlgorithm(algorithm);
     }
 
     // Getters/Setters -------------------------------------------------------------------------------------------------
@@ -83,7 +86,6 @@ import utils.FileUtils;
     /**
      * call algorithm function
      * @since 1.1
-     * @see #algorithm(FileReader, FileWriter, char)
      */
     public void run() {
         if (getFilePath().equals(""))
@@ -96,9 +98,15 @@ import utils.FileUtils;
             inputFile = new FileReader(getInputFileName());
             outputFile = new FileWriter(getOutputFileName());
 
-            algorithm(inputFile, outputFile, getKey());
+            algorithm.notifyObservers(EventTypesEnum.FUNCTION_START);
+            algorithm.algorithm(inputFile, outputFile, getKey());
+            algorithm.notifyObservers(EventTypesEnum.FUNCTION_END);
 
-        } catch (IOException exp) {
+        } catch (EndEventCalledBeforeStartEventException exp) {
+            System.out.println(exp.getMessage());
+            System.out.println(Arrays.toString(exp.getStackTrace()));
+
+        }catch (IOException exp) {
             System.out.println(exp.getMessage());
             System.out.println(Arrays.toString(exp.getStackTrace()));
 
@@ -127,19 +135,6 @@ import utils.FileUtils;
             System.out.println(exp.getMessage());
             System.out.println(Arrays.toString(exp.getStackTrace()));
         }
-    }
-
-    /**
-     * base algorithm function - check key is in the 0-255 range
-     * @param inputFile file to apply the algorithm to
-     * @param outputFile file to write the result into
-     * @param key key to use in the algorithm
-     * @throws IOException
-     * @throws IllegalKeyException if key is not in the 0-255 range
-     */
-    public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException, IllegalKeyException {
-        if (key > EncryptionFunction.BYTE_MAX_VALUE)
-            throw new IllegalKeyException();
     }
 
     /**

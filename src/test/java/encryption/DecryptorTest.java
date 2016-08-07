@@ -1,6 +1,9 @@
 package encryption;
 
 import encryption.Decryptor;
+import encryption.algorithms.NoneDecryptionAlgorithmDecorator;
+import encryption.algorithms.NoneEncryptionAlgorithmDecorator;
+import encryption.design.decorator.BasicAlgorithm;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,7 +46,7 @@ public class DecryptorTest {
         encrypted = new File(testFilePath + ".encrypted");
         decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
-        decryptor = new Decryptor(testFilePath + ".encrypted", key, AlgorithmTypeEnum.NONE);
+        decryptor = new Decryptor(testFilePath + ".encrypted", key, new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm()));
     }
 
     @Before
@@ -81,12 +84,6 @@ public class DecryptorTest {
 
         decryptor.setFilePath(folder.getRoot().getCanonicalPath() + "\\myFile.encrypted");
         assertThat(decryptor.getFilePath(), is(folder.getRoot().getCanonicalPath() + "\\myFile.encrypted"));
-    }
-
-    @Test
-    public void preformFunctionShouldWriteToScreen() {
-        decryptor.run();
-        assertThat(outContent.toString(), is("decryption simulation of file " + decryptor.getFilePath() + "\r\n"));
     }
 
     @Test

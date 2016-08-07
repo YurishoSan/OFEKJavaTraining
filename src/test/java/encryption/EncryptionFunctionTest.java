@@ -24,9 +24,6 @@ public class EncryptionFunctionTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    @Rule
-    public ExpectedException exceptionGrabber = ExpectedException.none();
-
     @Before
     public void setUpEncryptionFunction() {
         //build a generic encryptionFunction
@@ -71,11 +68,5 @@ public class EncryptionFunctionTest {
         assertThat(encryptionFunction.getFilePath(), is(folder.getRoot().getCanonicalPath() + "\\myFile.txt"));
     }
 
-    @Test
-    public void algorithmWithBigKeyShouldThrowIllegalKeyException() throws IOException, IllegalKeyException {
-        folder.newFile("myFile.txt");
 
-        exceptionGrabber.expect(IllegalKeyException.class);
-        encryptionFunction.algorithm(new FileReader(folder.getRoot().getCanonicalPath() + "\\myFile.txt"), new FileWriter(folder.getRoot().getCanonicalPath() + "\\myFile.txt"), (char) 256);
-    }
 }
