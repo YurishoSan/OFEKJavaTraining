@@ -1,9 +1,6 @@
 package encryption.algorithms;
 
-import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.exception.IllegalKeyException;
-
-import java.io.*;
+import javafx.util.Pair;
 
 /**
  * Created by yurisho on 31/07/2016.
@@ -11,7 +8,7 @@ import java.io.*;
  * Preforms no encryption algorithm
  *
  * @author Yitzhak Goldstein
- * @version 1.2
+ * @version 3.0
  */
 public class NoneEncryptionAlgorithmDecorator extends ObservableEncryptionAlgorithmDecorator {
 
@@ -19,28 +16,11 @@ public class NoneEncryptionAlgorithmDecorator extends ObservableEncryptionAlgori
      * decorator contor
      * @param decoratedEncryptionAlgorithm algorithm to decorate
      */
-    public NoneEncryptionAlgorithmDecorator(EncryptionAlgorithm decoratedEncryptionAlgorithm) {
+    public NoneEncryptionAlgorithmDecorator(BasicAlgorithm decoratedEncryptionAlgorithm, char key) {
         super(decoratedEncryptionAlgorithm);
-    }
-
-    /**
-     * apply no algorithm for encryption on the original and write the result to the encrypted
-     * @param original file to apply the algorithm to
-     * @param encrypted file to write the result into
-     * @param key key to use in the algorithm
-     * @throws IOException if could not handle the files
-     */
-    @Override
-    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException, IllegalKeyException {
         /* algorithm pseudo code
             copy original file to encrypted file
-         */
-        super.algorithm(original, encrypted, key);
-        int c;
-
-        while ((c = original.read()) != -1) {
-            encrypted.write(c & (0xff));
-        }
-        encrypted.close();
+        */
+        this.addStep(new Pair<>(Pair::getValue, key));
     }
 }

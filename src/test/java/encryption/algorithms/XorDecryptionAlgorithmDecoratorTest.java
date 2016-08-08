@@ -1,7 +1,6 @@
 package encryption.algorithms;
 
-import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.exception.IllegalKeyException;
+import encryption.exception.EncryptionException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -9,6 +8,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -19,7 +20,7 @@ import static org.junit.Assert.*;
 public class XorDecryptionAlgorithmDecoratorTest {
     private File encrypted;
     private File decrypted;
-    private final char key = 10;
+    private final char key = (char) 10;
     private XorDecryptionAlgorithmDecorator decryptionAlgorithm;
 
     @Rule
@@ -37,11 +38,7 @@ public class XorDecryptionAlgorithmDecoratorTest {
         encrypted = new File(testFilePath + ".encrypted");
         decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
-        decryptionAlgorithm = new XorDecryptionAlgorithmDecorator(new EncryptionAlgorithm() {
-            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
-
-            }
-        });
+        decryptionAlgorithm = new XorDecryptionAlgorithmDecorator(new BasicAlgorithm(), key);
 
     }
 
@@ -51,7 +48,7 @@ public class XorDecryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarDecryptTheFile() throws IOException, IllegalKeyException {
+    public void algorithmShouldCaesarDecryptTheFile() throws IOException, EncryptionException {
         String fileContentDecrypted = "Hello, world!";
 
         char[] fileContentXorEncryptedByteArray = {0x42,0x6f,0x66,0x66,0x65,0x26,0x2a,0x7d,0x65,0x78,0x66,0x6e,0x2b};
@@ -62,7 +59,10 @@ public class XorDecryptionAlgorithmDecoratorTest {
         writer.println(fileContentXorEncrypted);
         writer.close();
 
-        decryptionAlgorithm.algorithm(new FileReader(encrypted), new FileWriter(decrypted), key);
+        decryptionAlgorithm.setInputFile(encrypted);
+        decryptionAlgorithm.setOutputFile(decrypted);
+        decryptionAlgorithm.init();
+        decryptionAlgorithm.algorithm();
 
         BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
 

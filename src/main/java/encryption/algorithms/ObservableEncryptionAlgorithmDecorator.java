@@ -1,14 +1,17 @@
 package encryption.algorithms;
 
 import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.design.observer.EventTypesEnum;
 import encryption.design.observer.ObservableFunction;
-import encryption.exception.EndEventCalledBeforeStartEventException;
-import encryption.exception.IllegalKeyException;
+import encryption.exception.EncryptionException;
+import javafx.util.Pair;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by yurisho on 05/08/2016.
@@ -17,22 +20,65 @@ import java.io.IOException;
  * also observable using encryption.design.observer.ObservableFunctionSubscriber
  *
  * @author Yitzhak Goldstein
- * @version 1.1
+ * @version 3.0
  */
+@EqualsAndHashCode(callSuper = true)
+@Data
 public abstract class ObservableEncryptionAlgorithmDecorator extends ObservableFunction implements EncryptionAlgorithm {
     protected EncryptionAlgorithm decoratedEncryptionAlgorithm;
 
     public ObservableEncryptionAlgorithmDecorator(EncryptionAlgorithm decoratedEncryptionAlgorithm) {
-        this.decoratedEncryptionAlgorithm = decoratedEncryptionAlgorithm;
+        setDecoratedEncryptionAlgorithm(decoratedEncryptionAlgorithm);
     }
 
-    public final void callAlgorithm(FileReader original, FileWriter encrypted, char key) throws IOException, IllegalKeyException, EndEventCalledBeforeStartEventException {
-        notifyObservers(EventTypesEnum.FUNCTION_START);
-        decoratedEncryptionAlgorithm.algorithm(original, encrypted, key);
-        notifyObservers(EventTypesEnum.FUNCTION_END);
+    @Override
+    public void init() throws EncryptionException {
+        if (decoratedEncryptionAlgorithm != null)
+            decoratedEncryptionAlgorithm.init();
     }
 
-    public void algorithm(FileReader original, FileWriter encrypted, char key) throws IOException, IllegalKeyException {
-        decoratedEncryptionAlgorithm.algorithm(original, encrypted, key);
+    @Override
+    public void algorithm() throws IOException {
+        if (decoratedEncryptionAlgorithm != null)
+            decoratedEncryptionAlgorithm.algorithm();
     }
+
+    @Override
+    public void setInputFile(File value) {
+        if (decoratedEncryptionAlgorithm != null)
+            decoratedEncryptionAlgorithm.setInputFile(value);
+    }
+
+    @Override
+    public void setOutputFile(File value) {
+        if (decoratedEncryptionAlgorithm != null)
+            decoratedEncryptionAlgorithm.setOutputFile(value);
+    }
+
+    @Override
+    public void addStep(Pair<Function<Pair<Character, Integer>, Integer>, Character> value) {
+        if (decoratedEncryptionAlgorithm != null)
+            decoratedEncryptionAlgorithm.addStep(value);
+    }
+
+    @Override
+    public File getInputFile() {
+        return decoratedEncryptionAlgorithm.getInputFile();
+    }
+
+    @Override
+    public File getOutputFile() {
+        return decoratedEncryptionAlgorithm.getOutputFile();
+    }
+
+    @Override
+    public Pair<Function<Pair<Character, Integer>, Integer>, Character> getStep(int index) {
+        return decoratedEncryptionAlgorithm.getStep(index);
+    }
+
+    @Override
+    public List<Pair<Function<Pair<Character, Integer>, Integer>, Character>> getSteps() {
+        return decoratedEncryptionAlgorithm.getSteps();
+    }
+
 }

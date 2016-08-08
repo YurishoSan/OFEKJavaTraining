@@ -1,10 +1,8 @@
 package encryption.algorithms;
 
-import encryption.design.decorator.EncryptionAlgorithm;
 import encryption.EncryptionFunction;
-import encryption.exception.IllegalKeyException;
-
-import java.io.*;
+import encryption.exception.EncryptionException;
+import javafx.util.Pair;
 
 /**
  * Created by yurisho on 31/07/2016.
@@ -12,41 +10,27 @@ import java.io.*;
  * Preforms caesar decryption algorithm
  *
  * @author Yitzhak Goldstein
- * @version 1.2
+ * @version 3.0
  */
 public class CaesarDecryptionAlgorithmDecorator extends ObservableEncryptionAlgorithmDecorator {
     /**
      * decorator contor
      * @param decoratedDecryptionAlgorithm algorithm to decorate
      */
-    public CaesarDecryptionAlgorithmDecorator(EncryptionAlgorithm decoratedDecryptionAlgorithm) {
+    public CaesarDecryptionAlgorithmDecorator(BasicAlgorithm decoratedDecryptionAlgorithm, char key) {
         super(decoratedDecryptionAlgorithm);
-    }
-
-    /**
-     * apply caesar algorithm for decryption on the encrypted and write the result to the decrypted
-     * @param encrypted file to apply the algorithm to
-     * @param decrypted file to write the result into
-     * @param key key to use in the algorithm
-     * @throws IOException if could not handle the files
-     */
-    @Override
-    public void algorithm(FileReader encrypted, FileWriter decrypted, char key) throws IOException, IllegalKeyException {
-        /* algorithm pseudo code
-            for-each byte encryptedByte in encrypted
-                       decryptedByte <- encryptedByte - key with underflow
-                       write decryptedByte to file decrypted
-        */
-        super.algorithm(encrypted, decrypted, key);
-
-        int c;
-
-        while ((c = encrypted.read()) != -1) {
-            int value = c - key;
+        this.addStep(new Pair<>((c) -> {
+            /* algorithm pseudo code
+                   decryptedByte <- encryptedByte - key with underflow
+            */
+            int value = c.getValue() - c.getKey();
             while (value < 0)
                 value = EncryptionFunction.BYTE_MAX_VALUE + value + 1;
-            decrypted.write(value & (0xff));
-        }
-        decrypted.close();
+            return value;
+        }, key));
+    }
+
+    public void init() throws EncryptionException{
+        super.init();
     }
 }

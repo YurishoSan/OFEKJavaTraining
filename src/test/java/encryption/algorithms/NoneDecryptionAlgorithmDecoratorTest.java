@@ -1,7 +1,6 @@
 package encryption.algorithms;
 
-import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.exception.IllegalKeyException;
+import encryption.exception.EncryptionException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -9,6 +8,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -21,7 +22,7 @@ import static org.junit.Assert.*;
 public class NoneDecryptionAlgorithmDecoratorTest {
     private File encrypted;
     private File decrypted;
-    private final char key = 10;
+    private final List<Character> keys = Collections.singletonList((char) 10);
     private NoneDecryptionAlgorithmDecorator decryptionAlgorithm;
 
     @Rule
@@ -39,11 +40,7 @@ public class NoneDecryptionAlgorithmDecoratorTest {
         encrypted = new File(testFilePath + ".encrypted");
         decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
-        decryptionAlgorithm = new NoneDecryptionAlgorithmDecorator(new EncryptionAlgorithm() {
-            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
-
-            }
-        });
+        decryptionAlgorithm = new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm(), (char)0);
 
     }
 
@@ -53,7 +50,7 @@ public class NoneDecryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldWriteTheFileAsIs() throws IOException, IllegalKeyException {
+    public void algorithmShouldWriteTheFileAsIs() throws IOException, EncryptionException {
         String fileContentDecrypted = "Hello, world!";
 
         //write test data to file
@@ -61,7 +58,10 @@ public class NoneDecryptionAlgorithmDecoratorTest {
         writer.println(fileContentDecrypted);
         writer.close();
 
-        decryptionAlgorithm.algorithm(new FileReader(encrypted), new FileWriter(decrypted), key);
+        decryptionAlgorithm.setInputFile(encrypted);
+        decryptionAlgorithm.setOutputFile(decrypted);
+        decryptionAlgorithm.init();
+        decryptionAlgorithm.algorithm();
 
         BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
 

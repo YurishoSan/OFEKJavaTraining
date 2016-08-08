@@ -5,6 +5,7 @@ import encryption.exception.IllegalKeyException;
 import lombok.*;
 
 import java.io.*;
+import java.util.List;
 
 /**
  * Created by yurisho on 20/07/2016.
@@ -12,7 +13,7 @@ import java.io.*;
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 4.0
+ * @version 4.1
  */
 @EqualsAndHashCode(callSuper = true)
 @Data public class Encryptor extends EncryptionFunction{
@@ -29,11 +30,10 @@ import java.io.*;
      * contor
      * @since 1.0
      * @param filePath path of file to encrypt
-     * @param key the key for the encryption
      * @param algorithm  Type of Algorithm to use
      */
-    public Encryptor(String filePath, char key, ObservableEncryptionAlgorithmDecorator algorithm) {
-        super(filePath, key, algorithm);
+    public Encryptor(String filePath, ObservableEncryptionAlgorithmDecorator algorithm) {
+        super(filePath, algorithm);
     }
 
     /**

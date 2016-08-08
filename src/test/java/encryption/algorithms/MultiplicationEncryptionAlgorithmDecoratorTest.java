@@ -1,6 +1,6 @@
 package encryption.algorithms;
 
-import encryption.design.decorator.EncryptionAlgorithm;
+import encryption.exception.EncryptionException;
 import encryption.exception.IllegalKeyException;
 import org.junit.After;
 import org.junit.Before;
@@ -10,6 +10,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -23,7 +25,7 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
     private File original;
     private File encrypted;
 
-    private final char key = 7;
+    private final char key = (char)7;
 
     private MultiplicationEncryptionAlgorithmDecorator encryptionAlgorithm;
 
@@ -43,11 +45,7 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
         original = new File(testFilePath);
         encrypted = new File(testFilePath + ".encrypted");
 
-        encryptionAlgorithm = new MultiplicationEncryptionAlgorithmDecorator( new EncryptionAlgorithm() {
-            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
-
-            }
-        });
+        encryptionAlgorithm = new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm(), key);
     }
 
     @After
@@ -56,7 +54,7 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldMultiplicationEncryptTheFile() throws IOException, IllegalKeyException {
+    public void algorithmShouldMultiplicationEncryptTheFile() throws IOException, EncryptionException {
         String fileContent = "Hello, world!";
 
         //write test data to file
@@ -67,7 +65,10 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
         char[] fileContentMultiplicationEncryptedByteArray = {0xf8,0xc3,0xf4,0xf4,0x09,0x34,0xe0,0x41,0x09,0x1e,0xf4,0xbc,0xe7};
         String fileContentMultiplicationEncrypted = new String(fileContentMultiplicationEncryptedByteArray);
 
-        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);
+        encryptionAlgorithm.setInputFile(original);
+        encryptionAlgorithm.setOutputFile(encrypted);
+        encryptionAlgorithm.init();
+        encryptionAlgorithm.algorithm();
 
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 
@@ -75,14 +76,26 @@ public class MultiplicationEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmWithEvenKeyShouldThrowIllegalKeyException() throws IOException, IllegalKeyException {
+    public void algorithmWithEvenKeyShouldThrowIllegalKeyException() throws IOException, EncryptionException {
         exceptionGrabber.expect(IllegalKeyException.class);
-        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), (char)6);
+
+        encryptionAlgorithm = new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm(), (char)6);
+
+        encryptionAlgorithm.setInputFile(original);
+        encryptionAlgorithm.setOutputFile(encrypted);
+        encryptionAlgorithm.init();
+        encryptionAlgorithm.algorithm();
     }
 
     @Test
-    public void algorithmWithZeroKeyShouldThrowIllegalKeyException() throws IOException, IllegalKeyException {
+    public void algorithmWithZeroKeyShouldThrowIllegalKeyException() throws IOException, EncryptionException {
         exceptionGrabber.expect(IllegalKeyException.class);
-        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), (char)0);
+
+        encryptionAlgorithm = new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm(), (char)0);
+
+        encryptionAlgorithm.setInputFile(original);
+        encryptionAlgorithm.setOutputFile(encrypted);
+        encryptionAlgorithm.init();
+        encryptionAlgorithm.algorithm();
     }
 }

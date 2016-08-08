@@ -1,9 +1,7 @@
 package encryption;
 
-import encryption.Decryptor;
 import encryption.algorithms.NoneDecryptionAlgorithmDecorator;
-import encryption.algorithms.NoneEncryptionAlgorithmDecorator;
-import encryption.design.decorator.BasicAlgorithm;
+import encryption.algorithms.BasicAlgorithm;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,6 +9,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -36,7 +36,7 @@ public class DecryptorTest {
     @Before
     public void setUpDecryptor() throws IOException {
         String testFilePath;
-        final char key = 10;
+        final char key = (char)10;
         final String fileName = "text.txt";
 
         testFilePath = folder.getRoot().getCanonicalPath() + "\\" + fileName;
@@ -46,7 +46,7 @@ public class DecryptorTest {
         encrypted = new File(testFilePath + ".encrypted");
         decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
-        decryptor = new Decryptor(testFilePath + ".encrypted", key, new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+        decryptor = new Decryptor(testFilePath + ".encrypted", new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
     }
 
     @Before

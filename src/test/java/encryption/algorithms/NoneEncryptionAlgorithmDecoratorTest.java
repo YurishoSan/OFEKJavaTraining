@@ -1,7 +1,6 @@
 package encryption.algorithms;
 
-import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.exception.IllegalKeyException;
+import encryption.exception.EncryptionException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -9,6 +8,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -22,7 +23,7 @@ public class NoneEncryptionAlgorithmDecoratorTest {
     private File original;
     private File encrypted;
 
-    private final char key = 10;
+    private final List<Character> keys = Collections.singletonList((char) 10);
 
     private NoneEncryptionAlgorithmDecorator encryptionAlgorithm;
 
@@ -39,11 +40,7 @@ public class NoneEncryptionAlgorithmDecoratorTest {
         original = new File(testFilePath);
         encrypted = new File(testFilePath + ".encrypted");
 
-        encryptionAlgorithm = new NoneEncryptionAlgorithmDecorator(new EncryptionAlgorithm() {
-            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
-
-            }
-        });
+        encryptionAlgorithm = new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), (char)0);
     }
 
     @After
@@ -52,7 +49,7 @@ public class NoneEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldWriteTheFileAsIs() throws IOException, IllegalKeyException {
+    public void algorithmShouldWriteTheFileAsIs() throws IOException, EncryptionException {
         String fileContent = "Hello, world!";
 
         //write test data to file
@@ -60,7 +57,10 @@ public class NoneEncryptionAlgorithmDecoratorTest {
         writer.println(fileContent);
         writer.close();
 
-        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);
+        encryptionAlgorithm.setInputFile(original);
+        encryptionAlgorithm.setOutputFile(encrypted);
+        encryptionAlgorithm.init();
+        encryptionAlgorithm.algorithm();
 
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 

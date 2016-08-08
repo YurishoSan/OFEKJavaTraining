@@ -1,15 +1,16 @@
 package encryption;
 
 import java.io.*;
-import java.time.Clock;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import encryption.algorithms.NoneEncryptionAlgorithmDecorator;
 import encryption.algorithms.ObservableEncryptionAlgorithmDecorator;
-import encryption.design.decorator.BasicAlgorithm;
+import encryption.algorithms.BasicAlgorithm;
 import encryption.design.observer.EventTypesEnum;
+import encryption.exception.EncryptionException;
 import encryption.exception.EndEventCalledBeforeStartEventException;
-import encryption.exception.IllegalKeyException;
 import lombok.*;
 import utils.FileUtils;
 
@@ -19,7 +20,7 @@ import utils.FileUtils;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 4.0
+ * @version 5.0
  */
 @Data public abstract class EncryptionFunction implements Runnable {
     // Constants -------------------------------------------------------------------------------------------------------
@@ -32,7 +33,6 @@ import utils.FileUtils;
      * @since 1.1
      */
     private String filePath;
-    private char key;
     private ObservableEncryptionAlgorithmDecorator algorithm;
     // Contors ---------------------------------------------------------------------------------------------------------
 
@@ -44,21 +44,18 @@ import utils.FileUtils;
      */
     public EncryptionFunction() {
         filePath = "";
-        key = 0;
-        algorithm = new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm());
+        algorithm = new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), (char)0);
     }
 
     /**
      * contor
      * @since 1.0
      * @param filePath path of file to preform function
-     * @param key the key for the encryption
      * @param algorithm Type of Algorithm to use
      */
-    public EncryptionFunction(String filePath, char key, ObservableEncryptionAlgorithmDecorator algorithm) {
+    public EncryptionFunction(String filePath, ObservableEncryptionAlgorithmDecorator algorithm) {
 
         setFilePath(filePath);
-        setKey(key);
         setAlgorithm(algorithm);
     }
 
@@ -87,35 +84,28 @@ import utils.FileUtils;
      * call algorithm function
      * @since 1.1
      */
-    public void run() {
+    public final void run() {
         if (getFilePath().equals(""))
             return;
 
-        FileReader inputFile = null;
-        FileWriter outputFile = null;
+        File inputFile, outputFile;
 
         try {
-            inputFile = new FileReader(getInputFileName());
-            outputFile = new FileWriter(getOutputFileName());
+            inputFile = new File(getInputFileName());
+            outputFile = new File(getOutputFileName());
+
+            algorithm.setInputFile(inputFile);
+            algorithm.setOutputFile(outputFile);
 
             algorithm.notifyObservers(EventTypesEnum.FUNCTION_START);
-            algorithm.algorithm(inputFile, outputFile, getKey());
+            algorithm.init();
+            algorithm.algorithm();
             algorithm.notifyObservers(EventTypesEnum.FUNCTION_END);
 
-        } catch (EndEventCalledBeforeStartEventException exp) {
+        } catch (IOException | EncryptionException exp) {
             System.out.println(exp.getMessage());
             System.out.println(Arrays.toString(exp.getStackTrace()));
 
-        }catch (IOException exp) {
-            System.out.println(exp.getMessage());
-            System.out.println(Arrays.toString(exp.getStackTrace()));
-
-        } catch (IllegalKeyException exp) {
-            System.out.println(exp.getMessage());
-            System.out.println(Arrays.toString(exp.getStackTrace()));
-        } finally {
-            close(inputFile);
-            close(outputFile);
         }
     }
 
@@ -127,7 +117,7 @@ import utils.FileUtils;
      * @param c the closeable object to close
      * @since 2.5
      */
-    private static void close(Closeable c) {
+    /*private static void close(Closeable c) {
         if (c == null) return;
         try {
             c.close();
@@ -135,7 +125,7 @@ import utils.FileUtils;
             System.out.println(exp.getMessage());
             System.out.println(Arrays.toString(exp.getStackTrace()));
         }
-    }
+    }*/
 
     /**
      * gets the path of the file to input

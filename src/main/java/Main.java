@@ -1,11 +1,10 @@
 import encryption.*;
 import encryption.algorithms.*;
-import encryption.design.decorator.BasicAlgorithm;
+import encryption.algorithms.BasicAlgorithm;
 import encryption.design.observer.EventTypesEnum;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
@@ -16,7 +15,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 3.0
+ * @version 3.1
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -142,7 +141,7 @@ public class Main {
      *
      * @since 2.3
      */
-    private static void SetKey(EncryptionFunction encryptionFunction, ChoiceEnum choice) {
+    private static char SetKey(EncryptionFunction encryptionFunction, ChoiceEnum choice) {
         /*
         SetKey pseudo code
             switch(choice)
@@ -186,17 +185,14 @@ public class Main {
 
                         break; //good key found, exit while loop
                     }
-                    catch (IllegalArgumentException exp) {
-                        System.out.println("key must be a number in range 0-" + EncryptionFunction.BYTE_MAX_VALUE + ", please try again:");
-                    }
-                    catch (InputMismatchException exp) {
+                    catch (IllegalArgumentException | InputMismatchException exp) {
                         System.out.println("key must be a number in range 0-" + EncryptionFunction.BYTE_MAX_VALUE + ", please try again:");
                     }
                 }
                 break;
         }
 
-        encryptionFunction.setKey(key);
+        return key;
     }
 
     /**
@@ -204,7 +200,7 @@ public class Main {
      *
      * @since 2.3
      */
-    private static ObservableEncryptionAlgorithmDecorator SetAlgorithm(EncryptionFunction encryptionFunction, ChoiceEnum function) {
+    private static ObservableEncryptionAlgorithmDecorator SetAlgorithm(EncryptionFunction encryptionFunction, ChoiceEnum function, char key) {
          /*
         SetAlgorithmType pseudo code
             do
@@ -238,23 +234,29 @@ public class Main {
         switch (function) {
             case ENCRYPT:
                 if (choice == '0' || choice == 'N' || choice == 'n')
-                    encryptionFunction.setAlgorithm(new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm()));
+                    encryptionFunction.setAlgorithm(new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
                 if (choice == '1' || choice == 'C' || choice == 'c')
-                    encryptionFunction.setAlgorithm(new CaesarEncryptionAlgorithmDecorator(new BasicAlgorithm()));
+                    encryptionFunction.setAlgorithm(new CaesarEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
                 if (choice == '2' || choice == 'X' || choice == 'x')
-                    encryptionFunction.setAlgorithm(new XorEncryptionAlgorithmDecorator(new BasicAlgorithm()));
-                if (choice == '3' || choice == 'M' || choice == 'm')
-                    encryptionFunction.setAlgorithm(new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm()));
+                    encryptionFunction.setAlgorithm(new XorEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
+                if (choice == '3' || choice == 'M' || choice == 'm') {
+                    //fix key
+                    if (key % 2 == 0) {
+                        key += 1;
+                        System.out.println("key fixed to: " + (int)key);
+                    }
+                    encryptionFunction.setAlgorithm(new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
+                }
                 break;
             case DECRYPT:
                 if (choice == '0' || choice == 'N' || choice == 'n')
-                    encryptionFunction.setAlgorithm(new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+                    encryptionFunction.setAlgorithm(new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
                 if (choice == '1' || choice == 'C' || choice == 'c')
-                    encryptionFunction.setAlgorithm(new CaesarDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+                    encryptionFunction.setAlgorithm(new CaesarDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
                 if (choice == '2' || choice == 'X' || choice == 'x')
-                    encryptionFunction.setAlgorithm(new XorDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+                    encryptionFunction.setAlgorithm(new XorDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
                 if (choice == '3' || choice == 'M' || choice == 'm')
-                    encryptionFunction.setAlgorithm(new MultiplicationDecryptionAlgorithmDecorator(new BasicAlgorithm()));
+                    encryptionFunction.setAlgorithm(new MultiplicationDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
                 break;
         }
 
@@ -319,8 +321,8 @@ public class Main {
         }
 
         SetFilePath(encryptionFunction);
-        SetKey(encryptionFunction, choice);
-        SetAlgorithm(encryptionFunction, choice);
+        char key = SetKey(encryptionFunction, choice);
+        SetAlgorithm(encryptionFunction, choice, key);
 
         EncryptionEventListener encryptionEventListener = new EncryptionEventListener(Clock.systemUTC());
         encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_START);

@@ -1,7 +1,6 @@
 package encryption.algorithms;
 
-import encryption.design.decorator.EncryptionAlgorithm;
-import encryption.exception.IllegalKeyException;
+import encryption.exception.EncryptionException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -9,6 +8,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -24,7 +25,7 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
     private File original;
     private File encrypted;
 
-    private final char key = 10;
+    private final char key = (char)10;
 
     private CaesarEncryptionAlgorithmDecorator encryptionAlgorithm;
 
@@ -41,11 +42,7 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
         original = new File(testFilePath);
         encrypted = new File(testFilePath + ".encrypted");
 
-        encryptionAlgorithm = new CaesarEncryptionAlgorithmDecorator( new EncryptionAlgorithm() {
-            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
-
-            }
-        });
+        encryptionAlgorithm = new CaesarEncryptionAlgorithmDecorator(new BasicAlgorithm(), key);
     }
 
     @After
@@ -54,7 +51,7 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarEncryptTheFile() throws IOException, IllegalKeyException {
+    public void algorithmShouldCaesarEncryptTheFile() throws IOException, EncryptionException {
         String fileContent = "Hello, world!";
 
         //write test data to file
@@ -65,7 +62,10 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
         char[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x81,0x79,0x7c,0x76,0x6e,0x2b};
         String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
 
-        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);
+        encryptionAlgorithm.setInputFile(original);
+        encryptionAlgorithm.setOutputFile(encrypted);;
+        encryptionAlgorithm.init();
+        encryptionAlgorithm.algorithm();
 
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 
@@ -73,7 +73,7 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarEncryptTheFileWithOverflow() throws IOException, IllegalKeyException {
+    public void algorithmShouldCaesarEncryptTheFileWithOverflow() throws IOException, EncryptionException {
         String fileContent = "Hello, world!ÿ";
 
         //write test data to file
@@ -84,7 +84,10 @@ public class CaesarEncryptionAlgorithmDecoratorTest {
         char[] fileContentCaesarEncryptedByteArray = {0x52,0x6f,0x76,0x76,0x79,0x36,0x2a,0x81,0x79,0x7c,0x76,0x6e,0x2b, 0x09};
         String fileContentCaesarEncrypted = new String(fileContentCaesarEncryptedByteArray);
 
-        encryptionAlgorithm.algorithm(new FileReader(original), new FileWriter(encrypted), key);
+        encryptionAlgorithm.setInputFile(original);
+        encryptionAlgorithm.setOutputFile(encrypted);
+        encryptionAlgorithm.init();
+        encryptionAlgorithm.algorithm();
 
         BufferedReader encryptedReader = new BufferedReader(new FileReader(encrypted));
 

@@ -1,7 +1,7 @@
 package encryption.algorithms;
 
-import encryption.design.decorator.EncryptionAlgorithm;
 import encryption.exception.DecryptionKeyNotFoundException;
+import encryption.exception.EncryptionException;
 import encryption.exception.IllegalKeyException;
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +11,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -21,7 +23,7 @@ import static org.junit.Assert.*;
 public class MultiplicationDecryptionAlgorithmDecoratorTest {
     private File encrypted;
     private File decrypted;
-    private final char key = 7;
+    private final char key = (char) 7;
     private MultiplicationDecryptionAlgorithmDecorator decryptionAlgorithm;
 
     @Rule
@@ -42,11 +44,7 @@ public class MultiplicationDecryptionAlgorithmDecoratorTest {
         encrypted = new File(testFilePath + ".encrypted");
         decrypted = new File(testFilePathWOExtension + "_decrypted" + testFilePathExtension);
 
-        decryptionAlgorithm = new MultiplicationDecryptionAlgorithmDecorator(new EncryptionAlgorithm() {
-            public void algorithm(FileReader inputFile, FileWriter outputFile, char key) throws IOException {
-
-            }
-        });
+        decryptionAlgorithm = new MultiplicationDecryptionAlgorithmDecorator(new BasicAlgorithm(), key);
 
     }
 
@@ -56,7 +54,7 @@ public class MultiplicationDecryptionAlgorithmDecoratorTest {
     }
 
     @Test
-    public void algorithmShouldCaesarDecryptTheFile() throws IOException, IllegalKeyException {
+    public void algorithmShouldMultiplicationDecryptTheFile() throws IOException, EncryptionException {
         String fileContentDecrypted = "Hello, world!";
 
         char[] fileContentMultiplicationEncryptedByteArray = {0xf8, 0xc3, 0xf4, 0xf4, 0x09, 0x34, 0xe0, 0x41, 0x09, 0x1e, 0xf4, 0xbc, 0xe7};
@@ -67,7 +65,10 @@ public class MultiplicationDecryptionAlgorithmDecoratorTest {
         writer.println(fileContentMultiplicationEncrypted);
         writer.close();
 
-        decryptionAlgorithm.algorithm(new FileReader(encrypted), new FileWriter(decrypted), key);
+        decryptionAlgorithm.setInputFile(encrypted);
+        decryptionAlgorithm.setOutputFile(decrypted);
+        decryptionAlgorithm.init();
+        decryptionAlgorithm.algorithm();
 
         BufferedReader decryptedReader = new BufferedReader(new FileReader(decrypted));
 
@@ -77,21 +78,33 @@ public class MultiplicationDecryptionAlgorithmDecoratorTest {
     @Test
     public void FindDecryptionKeyShouldReturnTheRightKey() {
         try {
-            assertThat(MultiplicationDecryptionAlgorithmDecorator.FindDecryptionKey(key), is((char) 183));
+            assertThat(MultiplicationDecryptionAlgorithmDecorator.FindDecryptionKey(decryptionAlgorithm.getStep(1).getValue()), is((char) 183));
         } catch (DecryptionKeyNotFoundException exp) {
             fail();
         }
     }
 
     @Test
-    public void algorithmWithEvenKeyShouldThrowIllegalKeyException() throws IOException, IllegalKeyException {
+    public void algorithmWithEvenKeyShouldThrowIllegalKeyException() throws IOException, EncryptionException {
         exceptionGrabber.expect(IllegalKeyException.class);
-        decryptionAlgorithm.algorithm(new FileReader(encrypted), new FileWriter(decrypted), (char) 6);
+
+        decryptionAlgorithm = new MultiplicationDecryptionAlgorithmDecorator(new BasicAlgorithm(), (char)6);
+
+        decryptionAlgorithm.setInputFile(encrypted);
+        decryptionAlgorithm.setOutputFile(decrypted);
+        decryptionAlgorithm.init();
+        decryptionAlgorithm.algorithm();
     }
 
     @Test
-    public void algorithmWithZeroKeyShouldThrowIllegalKeyException() throws IOException, IllegalKeyException {
+    public void algorithmWithZeroKeyShouldThrowIllegalKeyException() throws IOException, EncryptionException {
         exceptionGrabber.expect(IllegalKeyException.class);
-        decryptionAlgorithm.algorithm(new FileReader(encrypted), new FileWriter(decrypted), (char) 0);
+
+        decryptionAlgorithm = new MultiplicationDecryptionAlgorithmDecorator(new BasicAlgorithm(), (char)0);
+
+        decryptionAlgorithm.setInputFile(encrypted);
+        decryptionAlgorithm.setOutputFile(decrypted);
+        decryptionAlgorithm.init();
+        decryptionAlgorithm.algorithm();
     }
 }

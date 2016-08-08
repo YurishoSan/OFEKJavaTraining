@@ -1,8 +1,7 @@
 package encryption;
 
-import encryption.Encryptor;
 import encryption.algorithms.NoneEncryptionAlgorithmDecorator;
-import encryption.design.decorator.BasicAlgorithm;
+import encryption.algorithms.BasicAlgorithm;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,6 +9,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -36,7 +37,7 @@ public class EncryptorTest {
     @Before
     public void setUpEncryptor() throws IOException {
         final String fileName = "text.txt";
-        final char key = 10;
+        final char key = (char)10;
         String testFilePath;
 
         testFilePath = folder.getRoot().getCanonicalPath() + "\\" + fileName;
@@ -49,7 +50,7 @@ public class EncryptorTest {
         writer.println(fileContent);
         writer.close();
 
-        encryptor = new Encryptor(testFilePath, key, new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm()));
+        encryptor = new Encryptor(testFilePath, new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
     }
 
     @Before
