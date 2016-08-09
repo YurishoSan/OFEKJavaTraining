@@ -15,7 +15,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 3.1
+ * @version 4.0
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -141,9 +141,9 @@ public class Main {
      *
      * @since 2.3
      */
-    private static char SetKey(EncryptionFunction encryptionFunction, ChoiceEnum choice) {
+    private static char GetKey(ChoiceEnum choice) {
         /*
-        SetKey pseudo code
+        GetKey pseudo code
             switch(choice)
                 case ENCRYPT:
                     key <- Random()
@@ -161,7 +161,7 @@ public class Main {
                         print("Please try again")
                     break
 
-            encryptionFunction.setKet(key as byte)
+            return key
          */
 
         Random rnd = new Random();
@@ -195,12 +195,16 @@ public class Main {
         return key;
     }
 
+    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function) {
+        return GetAlgorithm(function, false);
+    }
+
     /**
      * Sets the algorithm for the encryption/decryption
      *
      * @since 2.3
      */
-    private static ObservableEncryptionAlgorithmDecorator SetAlgorithm(EncryptionFunction encryptionFunction, ChoiceEnum function, char key) {
+    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function, boolean reversed) {
          /*
         SetAlgorithmType pseudo code
             do
@@ -209,54 +213,144 @@ public class Main {
                     1) [C]aesar
                     2) [X]or
                     3) [M]ultiplication
+
+                    4) [D]ouble
+                    5) [R]everse
+                    6) [S]plit
                  ")
                  choice <- input()
-            while (choice != 0..3 or N,C,X,M or n,c,x,m)
+            while (choice != 0..6 or N,C,X,M,D,R,S or n,c,x,m,d,r,s)
+
+            if chosen double or split
+                algo1 <- SetAlgorithm(..)
+                algo2 <- SetAlgorithm(..)
+
+            if chosen reverse
+                decorate the algorithm with the opposite decorator
 
             decorate the algorithm with the appropriate decorator
         */
         char choice;
         Scanner reader; // input reader
 
+        ObservableEncryptionAlgorithmDecorator algo1;
+        ObservableEncryptionAlgorithmDecorator algo2;
         do {
             System.out.println("Please choose algorithm:");
             System.out.println("\t0) [N]one");
             System.out.println("\t1) [C]aesar");
             System.out.println("\t2) [X]or");
             System.out.println("\t3) [M]ultiplication");
+            System.out.println("\n");
+            System.out.println("\t4) [D]ouble");
+            System.out.println("\t5) [R]everse");
+            System.out.println("\t6) [S]plit");
 
             reader = new Scanner(System.in);
             choice = reader.next().charAt(0);
-        } while ((choice < '0' || choice > '3')&&
-                choice != 'N' && choice != 'C' && choice != 'X' && choice != 'M' &&
-                choice != 'n' && choice != 'c' && choice != 'x' && choice != 'm');
+        } while ((choice < '0' || choice > '6')&&
+                choice != 'N' && choice != 'C' && choice != 'X' &&choice != 'M' &&
+                choice != 'D' && choice != 'R' && choice != 'S' &&
+                choice != 'n' && choice != 'c' && choice != 'x' && choice != 'm' &&
+                choice != 'd' && choice != 'r' && choice != 's');
+
+        char key=0;
+        // only ask for key if a proper algorithm and not using other algorithm
+        if ((choice < '4' || choice > '6')&&
+                choice != 'D' && choice != 'R' && choice != 'S' &&
+                choice != 'd' && choice != 'r' && choice != 's')
+            if(!reversed) {
+                key = GetKey(function);
+            } else {
+                if(function == ChoiceEnum.ENCRYPT)
+                    key = GetKey(ChoiceEnum.DECRYPT);
+                else
+                    key = GetKey(ChoiceEnum.ENCRYPT);
+            }
 
         switch (function) {
             case ENCRYPT:
-                if (choice == '0' || choice == 'N' || choice == 'n')
-                    encryptionFunction.setAlgorithm(new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
-                if (choice == '1' || choice == 'C' || choice == 'c')
-                    encryptionFunction.setAlgorithm(new CaesarEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
-                if (choice == '2' || choice == 'X' || choice == 'x')
-                    encryptionFunction.setAlgorithm(new XorEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
-                if (choice == '3' || choice == 'M' || choice == 'm') {
-                    //fix key
-                    if (key % 2 == 0) {
-                        key += 1;
-                        System.out.println("key fixed to: " + (int)key);
-                    }
-                    encryptionFunction.setAlgorithm(new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm(), key));
+                switch (choice) {
+                    case '0':
+                    case 'N':
+                    case 'n':
+                        return new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), key);
+                    case '1':
+                    case 'C':
+                    case 'c':
+                        return new CaesarEncryptionAlgorithmDecorator(new BasicAlgorithm(), key);
+                    case '2':
+                    case 'X':
+                    case 'x':
+                        return new XorEncryptionAlgorithmDecorator(new BasicAlgorithm(), key);
+                    case '3':
+                    case 'M':
+                    case 'm':
+                        //fix key
+                        if (key % 2 == 0) {
+                            key += 1;
+                            System.out.println("key fixed to: " + (int)key);
+                        }
+                        return new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm(), key);
+                    case '4':
+                    case 'D':
+                    case 'd':
+                        System.out.println("please choose two algorithms to use in the double:");
+                        algo1 = GetAlgorithm(function);
+                        algo2 = GetAlgorithm(function);
+                        return new DoubleAlgorithmDecorator(algo1, algo2);
+                    case '5':
+                    case 'R':
+                    case 'r':
+                        System.out.println("please choose algorithm to use in reverse:");
+                        return GetAlgorithm(ChoiceEnum.DECRYPT, true);
+                    case '6':
+                    case 'S':
+                    case 's':
+                        System.out.println("please choose two algorithms to use in the split:");
+                        algo1 = GetAlgorithm(function);
+                        algo2 = GetAlgorithm(function);
+                        return new SplitAlgorithmDecorator(algo1, algo2);
                 }
                 break;
             case DECRYPT:
-                if (choice == '0' || choice == 'N' || choice == 'n')
-                    encryptionFunction.setAlgorithm(new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
-                if (choice == '1' || choice == 'C' || choice == 'c')
-                    encryptionFunction.setAlgorithm(new CaesarDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
-                if (choice == '2' || choice == 'X' || choice == 'x')
-                    encryptionFunction.setAlgorithm(new XorDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
-                if (choice == '3' || choice == 'M' || choice == 'm')
-                    encryptionFunction.setAlgorithm(new MultiplicationDecryptionAlgorithmDecorator(new BasicAlgorithm(), key));
+                switch (choice) {
+                    case '0':
+                    case 'N':
+                    case 'n':
+                        return new NoneDecryptionAlgorithmDecorator(new BasicAlgorithm(), key);
+                    case '1':
+                    case 'C':
+                    case 'c':
+                        return new CaesarDecryptionAlgorithmDecorator(new BasicAlgorithm(), key);
+                    case '2':
+                    case 'X':
+                    case 'x':
+                        return new XorDecryptionAlgorithmDecorator(new BasicAlgorithm(), key);
+                    case '3':
+                    case 'M':
+                    case 'm':
+                        return new MultiplicationDecryptionAlgorithmDecorator(new BasicAlgorithm(), key);
+                    case '4':
+                    case 'D':
+                    case 'd':
+                        System.out.println("please choose two algorithms to use in the double:");
+                        algo1 = GetAlgorithm(function);
+                        algo2 = GetAlgorithm(function);
+                        return new DoubleAlgorithmDecorator(algo1, algo2);
+                    case '5':
+                    case 'R':
+                    case 'r':
+                        System.out.println("please choose algorithm to use in reverse:");
+                        return GetAlgorithm(ChoiceEnum.ENCRYPT, true);
+                    case '6':
+                    case 'S':
+                    case 's':
+                        System.out.println("please choose two algorithms to use in the split:");
+                        algo1 = GetAlgorithm(function);
+                        algo2 = GetAlgorithm(function);
+                        return new SplitAlgorithmDecorator(algo1, algo2);
+                }
                 break;
         }
 
@@ -321,8 +415,7 @@ public class Main {
         }
 
         SetFilePath(encryptionFunction);
-        char key = SetKey(encryptionFunction, choice);
-        SetAlgorithm(encryptionFunction, choice, key);
+        encryptionFunction.setAlgorithm(GetAlgorithm(choice));
 
         EncryptionEventListener encryptionEventListener = new EncryptionEventListener(Clock.systemUTC());
         encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_START);
