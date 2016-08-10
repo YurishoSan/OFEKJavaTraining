@@ -3,11 +3,9 @@ import encryption.algorithms.*;
 import encryption.algorithms.BasicAlgorithm;
 import encryption.design.observer.EventTypesEnum;
 
+import java.io.*;
 import java.time.Clock;
-import java.util.Collections;
-import java.util.InputMismatchException;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by yurisho on 20/07/2016.
@@ -15,7 +13,7 @@ import java.util.Scanner;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 4.0
+ * @version 4.1
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -134,6 +132,21 @@ public class Main {
         } while (encryptionFunction.getFilePath().equals(""));
     }
 
+    private static char SetKey(Queue<Key> keys) {
+        /* SetKey pseudo code
+            key <- Random()
+            output(key)
+            return key
+         */
+        Random rnd = new Random();
+        char key = 0;
+
+        key = (char)rnd.nextInt(EncryptionFunction.BYTE_MAX_VALUE+1);
+        System.out.println("key: " + (int)key);
+        keys.add(new Key(key));
+        return key;
+    }
+
     /**
      * Sets the key for the encryption/decryption
      *
@@ -141,62 +154,48 @@ public class Main {
      *
      * @since 2.3
      */
-    private static char GetKey(ChoiceEnum choice) {
+    private static char GetKey(Queue<Key> keys) {
         /*
         GetKey pseudo code
-            switch(choice)
-                case ENCRYPT:
-                    key <- Random()
-                    output(key)
-                    break
-
-                case DECRYPT:
-                    while(true)
-                        print ("Enter Key:")
-                        key <- input()
-                    if (key can be converted to byte)
-                         break
-                    else
-                        print("Key is not a byte")
-                        print("Please try again")
-                    break
+            while(true)
+                print ("Enter Key:")
+                key <- input()
+            if (key can be converted to byte)
+                break
+            else
+                print("Key is not a byte")
+                print("Please try again")
 
             return key
          */
 
-        Random rnd = new Random();
-        char key = 0;
+        /*char key = 0;
 
-        switch (choice) {
-            case ENCRYPT:
-                key = (char)rnd.nextInt(EncryptionFunction.BYTE_MAX_VALUE+1);
-                System.out.println("key: " + (int)key);
-                break;
+        Scanner scanner;
+        while (true) {
+            System.out.println("Enter key:");
+            try {
+                scanner = new Scanner(System.in);
+                key = (char) scanner.nextInt();
+                if (key > EncryptionFunction.BYTE_MAX_VALUE)
+                    throw new IllegalArgumentException("key must be between 0 and " + EncryptionFunction.BYTE_MAX_VALUE);
 
-            case DECRYPT:
-                Scanner scanner;
-                while(true) {
-                    System.out.println("Enter key:");
-                    try {
-                        scanner = new Scanner(System.in);
-                        key = (char)scanner.nextInt();
-                        if (key > EncryptionFunction.BYTE_MAX_VALUE)
-                            throw new IllegalArgumentException("key must be between 0 and " + EncryptionFunction.BYTE_MAX_VALUE);
-
-                        break; //good key found, exit while loop
-                    }
-                    catch (IllegalArgumentException | InputMismatchException exp) {
-                        System.out.println("key must be a number in range 0-" + EncryptionFunction.BYTE_MAX_VALUE + ", please try again:");
-                    }
-                }
-                break;
+                break; //good key found, exit while loop
+            } catch (IllegalArgumentException | InputMismatchException exp) {
+                System.out.println("key must be a number in range 0-" + EncryptionFunction.BYTE_MAX_VALUE + ", please try again:");
+            }
         }
 
+        return key;*/
+
+        char key = keys.remove().getKey();
+        if (key > EncryptionFunction.BYTE_MAX_VALUE)
+            throw new IllegalArgumentException("key must be between 0 and " + EncryptionFunction.BYTE_MAX_VALUE);
         return key;
     }
 
-    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function) {
-        return GetAlgorithm(function, false);
+    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function, Queue<Key> keys) {
+        return GetAlgorithm(function, keys, false);
     }
 
     /**
@@ -204,7 +203,7 @@ public class Main {
      *
      * @since 2.3
      */
-    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function, boolean reversed) {
+    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function, Queue<Key> keys, boolean reversed) {
          /*
         SetAlgorithmType pseudo code
             do
@@ -260,12 +259,15 @@ public class Main {
                 choice != 'D' && choice != 'R' && choice != 'S' &&
                 choice != 'd' && choice != 'r' && choice != 's')
             if(!reversed) {
-                key = GetKey(function);
+                if (function == ChoiceEnum.ENCRYPT)
+                    key = SetKey(keys);
+                else
+                    key = GetKey(keys);
             } else {
                 if(function == ChoiceEnum.ENCRYPT)
-                    key = GetKey(ChoiceEnum.DECRYPT);
+                    key = GetKey(keys);
                 else
-                    key = GetKey(ChoiceEnum.ENCRYPT);
+                    key = SetKey(keys);
             }
 
         switch (function) {
@@ -296,20 +298,20 @@ public class Main {
                     case 'D':
                     case 'd':
                         System.out.println("please choose two algorithms to use in the double:");
-                        algo1 = GetAlgorithm(function);
-                        algo2 = GetAlgorithm(function);
+                        algo1 = GetAlgorithm(function, keys);
+                        algo2 = GetAlgorithm(function, keys);
                         return new DoubleAlgorithmDecorator(algo1, algo2);
                     case '5':
                     case 'R':
                     case 'r':
                         System.out.println("please choose algorithm to use in reverse:");
-                        return GetAlgorithm(ChoiceEnum.DECRYPT, true);
+                        return GetAlgorithm(ChoiceEnum.DECRYPT, keys, true);
                     case '6':
                     case 'S':
                     case 's':
                         System.out.println("please choose two algorithms to use in the split:");
-                        algo1 = GetAlgorithm(function);
-                        algo2 = GetAlgorithm(function);
+                        algo1 = GetAlgorithm(function, keys);
+                        algo2 = GetAlgorithm(function, keys);
                         return new SplitAlgorithmDecorator(algo1, algo2);
                 }
                 break;
@@ -326,6 +328,7 @@ public class Main {
                     case '2':
                     case 'X':
                     case 'x':
+
                         return new XorDecryptionAlgorithmDecorator(new BasicAlgorithm(), key);
                     case '3':
                     case 'M':
@@ -335,20 +338,20 @@ public class Main {
                     case 'D':
                     case 'd':
                         System.out.println("please choose two algorithms to use in the double:");
-                        algo1 = GetAlgorithm(function);
-                        algo2 = GetAlgorithm(function);
-                        return new DoubleAlgorithmDecorator(algo1, algo2);
+                        algo1 = GetAlgorithm(function, keys);
+                        algo2 = GetAlgorithm(function, keys);
+                        return new DoubleAlgorithmDecorator(algo2, algo1);
                     case '5':
                     case 'R':
                     case 'r':
                         System.out.println("please choose algorithm to use in reverse:");
-                        return GetAlgorithm(ChoiceEnum.ENCRYPT, true);
+                        return GetAlgorithm(ChoiceEnum.ENCRYPT, keys, true);
                     case '6':
                     case 'S':
                     case 's':
                         System.out.println("please choose two algorithms to use in the split:");
-                        algo1 = GetAlgorithm(function);
-                        algo2 = GetAlgorithm(function);
+                        algo1 = GetAlgorithm(function, keys);
+                        algo2 = GetAlgorithm(function, keys);
                         return new SplitAlgorithmDecorator(algo1, algo2);
                 }
                 break;
@@ -415,7 +418,13 @@ public class Main {
         }
 
         SetFilePath(encryptionFunction);
-        encryptionFunction.setAlgorithm(GetAlgorithm(choice));
+        try {
+            Queue<Key> keys = PrepareKeysQueue(choice, encryptionFunction.getFilePath());
+            encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
+            FinishKeysQueue(choice, encryptionFunction.getFilePath(), keys);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         EncryptionEventListener encryptionEventListener = new EncryptionEventListener(Clock.systemUTC());
         encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_START);
@@ -424,5 +433,35 @@ public class Main {
         encryptionFunction.run();
 
         pauseProg();
+    }
+
+    private static Queue<Key> PrepareKeysQueue(ChoiceEnum choice, String filePath) throws IOException, ClassNotFoundException {
+        File keyFile = new File(filePath.substring(0, filePath.lastIndexOf('\\'))+ "\\key.bin");
+        switch (choice) {
+            case ENCRYPT:
+                return new ArrayDeque<>();
+            case DECRYPT:
+                ObjectInputStream keyReader = new ObjectInputStream(new FileInputStream(keyFile));
+                Queue<Key> keys = (Queue<Key>) keyReader.readObject();
+                keyReader.close();
+                return keys;
+        }
+        return null;
+    }
+
+    private static void FinishKeysQueue(ChoiceEnum choice, String filePath, Queue<Key> keys) throws IOException {
+        File keyFile = new File(filePath.substring(0, filePath.lastIndexOf('\\'))+ "\\key.bin");
+        switch (choice) {
+            case ENCRYPT:
+                if (!keyFile.exists())
+                    //noinspection ResultOfMethodCallIgnored
+                    keyFile.createNewFile();
+                ObjectOutputStream keyWriter = new ObjectOutputStream(new FileOutputStream(keyFile));
+                keyWriter.writeObject(keys);
+                keyWriter.close();
+                break;
+            case DECRYPT:
+                break;
+        }
     }
 }
