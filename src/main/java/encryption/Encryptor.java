@@ -13,7 +13,7 @@ import java.util.List;
  * Preforms encryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 4.1
+ * @version 5.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data public class Encryptor extends EncryptionFunction{
@@ -51,6 +51,9 @@ import java.util.List;
      */
     @Override
     protected String getOutputFileName() {
-        return getFilePath() + ".encrypted";
+        if (getBatchMode())
+            return getFilePath().substring(0, getFilePath().lastIndexOf("\\")) + "\\encrypted" + getFilePath().substring(getFilePath().lastIndexOf("\\")+1);
+        else
+            return getFilePath() + ".encrypted";
     }
 }

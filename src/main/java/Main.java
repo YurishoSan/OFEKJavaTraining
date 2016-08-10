@@ -13,7 +13,7 @@ import java.util.*;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 4.1
+ * @version 5.0
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -25,6 +25,16 @@ public class Main {
         private enum ChoiceEnum {
         ENCRYPT,    //encrypt the file
         DECRYPT     //decrypt the file
+    }
+
+    /**
+     * Enum of different modes of operation
+     * @since 5.0
+     */
+    private enum ModeEnum {
+        SINGLE,
+        SYNC,
+        ASYNC
     }
     // Static Functions ------------------------------------------------------------------------------------------------
 
@@ -381,7 +391,32 @@ public class Main {
         main pseudo code
             PrintCredits()
 
+            mode <- SelectMode()
             choice <- SelectionMenu()
+            switch (mode)
+                case SINGLE:
+                    DoSingleFile(choice)
+                    break;
+                case SYNC:
+                    DoSync(choice)
+                    break;
+                case ASYNC:
+                    DoAsync(choice)
+                    break;
+
+
+        */
+        PrintCredits();
+
+        ChoiceEnum choice = SelectionMenu();
+        DoSingleFile(choice);
+
+        pauseProg();
+    }
+
+    private static void DoSingleFile(ChoiceEnum choice) {
+        /*
+        DoSingleFile pseudo code
 
             switch (choice)
                 case ENCRYPT:
@@ -392,17 +427,15 @@ public class Main {
                 break
 
             SetFilePath(encryptionFunction)
-            SetKey(encryptionFunction, choice)
-            SetAlgorithm(encryptionFunction, choice)
+            keys = PrepareKeysQueue(choice, filePath);
+            encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
+            FinishKeysQueue(choice, filePath, keys);
 
+            add event listeners
             try decoratedEncryptionFunction.run(),
                 and in case of exception print exception info
-        */
-
-        EncryptionFunction encryptionFunction; // object for encryption function to preform
-        PrintCredits();
-
-        ChoiceEnum choice = SelectionMenu();
+         */
+        EncryptionFunction encryptionFunction = null; // object for encryption function to preform
 
         switch (choice) {
             case ENCRYPT:
@@ -411,10 +444,6 @@ public class Main {
             case DECRYPT:
                 encryptionFunction = new Decryptor();
                 break;
-            default:
-                System.out.println("unsupported choice");
-                pauseProg();
-                return;
         }
 
         SetFilePath(encryptionFunction);
@@ -431,8 +460,57 @@ public class Main {
         encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_END);
 
         encryptionFunction.run();
+    }
 
-        pauseProg();
+    private static void DoSync(ChoiceEnum choice) {
+        /* DoSync pseudo code
+            directory <- setDirectory()
+
+            keys = PrepareKeysQueue(choice, filePath);
+            encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
+            FinishKeysQueue(choice, filePath, keys);
+
+            for each file in directory and not sub directories
+                encryptionFunction.setFilePath(file.name)
+
+                add event listeners
+                try decoratedEncryptionFunction.run(),
+                    and in case of exception print exception info
+         */
+
+    }
+
+    private static void DoAsync(ChoiceEnum choice) {
+        /* DoSync pseudo code
+            directory <- setDirectory()
+
+            keys = PrepareKeysQueue(choice, filePath);
+            encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
+            FinishKeysQueue(choice, filePath, keys);
+
+            for each file in directory and not sub directories
+                encryptionFunction.setFilePath(file.name)
+
+                add event listeners
+                try run new thread using decoratedEncryptionFunction.run(),
+                    and in case of exception print exception info
+         */
+    }
+
+    private static ModeEnum SelectMode() {
+        /* ModeEnum pseudo code
+            do
+                print("Please select mode:
+                    [1] Single [F]ile
+                    [2] Directory - [S]ync
+                    [3] Directory - [A]sync
+                ")
+
+                mode <- input ()
+            while (mode != 1..3, 'F', 'f', 'S', 's', 'A', 'a')
+
+            return mode
+         */
     }
 
     private static Queue<Key> PrepareKeysQueue(ChoiceEnum choice, String filePath) throws IOException, ClassNotFoundException {

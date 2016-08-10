@@ -20,7 +20,7 @@ import utils.FileUtils;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 5.0
+ * @version 5.1
  */
 @Data public abstract class EncryptionFunction implements Runnable {
     // Constants -------------------------------------------------------------------------------------------------------
@@ -34,6 +34,7 @@ import utils.FileUtils;
      */
     private String filePath;
     private ObservableEncryptionAlgorithmDecorator algorithm;
+    private boolean batchMode;
     // Contors ---------------------------------------------------------------------------------------------------------
 
     /**
@@ -43,8 +44,9 @@ import utils.FileUtils;
      * @since 1.1
      */
     public EncryptionFunction() {
-        filePath = "";
-        algorithm = new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), (char)0);
+        setFilePath("");
+        setAlgorithm(new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), (char)0));
+        setBatchMode(false);
     }
 
     /**
@@ -57,6 +59,21 @@ import utils.FileUtils;
 
         setFilePath(filePath);
         setAlgorithm(algorithm);
+        setBatchMode(false);
+    }
+
+    /**
+     * contor
+     * @since 5.1
+     * @param filePath path of file to preform function
+     * @param algorithm Type of Algorithm to use
+     * @param batchMode is the function running on a full directory
+     */
+    public EncryptionFunction(String filePath, ObservableEncryptionAlgorithmDecorator algorithm, boolean batchMode) {
+
+        setFilePath(filePath);
+        setAlgorithm(algorithm);
+        setBatchMode(batchMode);
     }
 
     // Getters/Setters -------------------------------------------------------------------------------------------------
@@ -138,4 +155,8 @@ import utils.FileUtils;
      * @return full path of the file to output
      */
     protected abstract String getOutputFileName();
+
+    public boolean getBatchMode() {
+        return batchMode;
+    }
 }

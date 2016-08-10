@@ -13,7 +13,7 @@ import java.util.List;
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 4.1
+ * @version 5.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data public class Decryptor extends EncryptionFunction{
@@ -71,21 +71,24 @@ import java.util.List;
      */
     @Override
     protected String getOutputFileName() {
-        String originalFilePath;
-        String testFilePathWOExtension;
-        String testFilePathExtension;
+        if (getBatchMode())
+            return getFilePath().substring(0, getFilePath().lastIndexOf("\\")) + "\\decrypted" + getFilePath().substring(getFilePath().lastIndexOf("\\")+1);
+        else {
+            String originalFilePath;
+            String testFilePathWOExtension;
+            String testFilePathExtension;
 
-        //get file names
-        originalFilePath = getFilePath().substring(0, getFilePath().lastIndexOf('.')); // remove '.encrypted', duo to setFilePath override, there must be a '.encrypted'
-        if(getFilePath() != null && getFilePath().contains(".")) { // if there is an extension
-            testFilePathWOExtension = originalFilePath.substring(0, originalFilePath.lastIndexOf('.'));
-            testFilePathExtension = originalFilePath.substring(originalFilePath.lastIndexOf("."));
-        }
-        else { //no extension
-            testFilePathWOExtension = originalFilePath;
-            testFilePathExtension = "";
-        }
+            //get file names
+            originalFilePath = getFilePath().substring(0, getFilePath().lastIndexOf('.')); // remove '.encrypted', duo to setFilePath override, there must be a '.encrypted'
+            if (getFilePath() != null && getFilePath().contains(".")) { // if there is an extension
+                testFilePathWOExtension = originalFilePath.substring(0, originalFilePath.lastIndexOf('.'));
+                testFilePathExtension = originalFilePath.substring(originalFilePath.lastIndexOf("."));
+            } else { //no extension
+                testFilePathWOExtension = originalFilePath;
+                testFilePathExtension = "";
+            }
 
-        return testFilePathWOExtension + "_decrypted" + testFilePathExtension;
+            return testFilePathWOExtension + "_decrypted" + testFilePathExtension;
+        }
     }
 }
