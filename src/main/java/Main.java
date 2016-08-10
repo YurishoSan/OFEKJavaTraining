@@ -7,6 +7,9 @@ import utils.FileUtils;
 import java.io.*;
 import java.time.Clock;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yurisho on 20/07/2016.
@@ -17,6 +20,8 @@ import java.util.*;
  * @version 5.1
  */
 public class Main {
+    static ExecutorService executor;
+
     // Enums -----------------------------------------------------------------------------------------------------------
 
     /**
@@ -157,7 +162,7 @@ public class Main {
         return directoryPath;
     }
 
-    private static char SetKey(Queue<Key> keys) {
+    private static char SetKey(Deque<Key> keys) {
         /* SetKey pseudo code
             key <- Random()
             output(key)
@@ -219,7 +224,7 @@ public class Main {
         return key;
     }
 
-    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function, Queue<Key> keys) {
+    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function, Deque<Key> keys) {
         return GetAlgorithm(function, keys, false);
     }
 
@@ -228,7 +233,7 @@ public class Main {
      *
      * @since 2.3
      */
-    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function, Queue<Key> keys, boolean reversed) {
+    private static ObservableEncryptionAlgorithmDecorator GetAlgorithm(ChoiceEnum function, Deque<Key> keys, boolean reversed) {
          /*
         SetAlgorithmType pseudo code
             do
@@ -316,6 +321,8 @@ public class Main {
                         //fix key
                         if (key % 2 == 0) {
                             key += 1;
+                            keys.removeLast();
+                            keys.add(new Key(key));
                             System.out.println("key fixed to: " + (int)key);
                         }
                         return new MultiplicationEncryptionAlgorithmDecorator(new BasicAlgorithm(), key);
@@ -477,7 +484,7 @@ public class Main {
 
         SetFilePath(encryptionFunction);
         try {
-            Queue<Key> keys = PrepareKeysQueue(choice, encryptionFunction.getFilePath().substring(0, encryptionFunction.getFilePath().lastIndexOf('\\')));
+            Deque<Key> keys = PrepareKeysQueue(choice, encryptionFunction.getFilePath().substring(0, encryptionFunction.getFilePath().lastIndexOf('\\')));
             encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
             FinishKeysQueue(choice,encryptionFunction.getFilePath().substring(0, encryptionFunction.getFilePath().lastIndexOf('\\')), keys);
         } catch (IOException | ClassNotFoundException e) {
@@ -519,7 +526,7 @@ public class Main {
         String directory = GetDirectory();
 
         try {
-            Queue<Key> keys = PrepareKeysQueue(choice, directory);
+            Deque<Key> keys = PrepareKeysQueue(choice, directory);
             encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
             FinishKeysQueue(choice,directory, keys);
         } catch (IOException | ClassNotFoundException e) {
@@ -529,6 +536,9 @@ public class Main {
         File folder = new File(directory);
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles != null) {
+            long startTime = System.currentTimeMillis();
+            if (async)
+                executor = Executors.newFixedThreadPool(listOfFiles.length);
             for (File file : listOfFiles) {
                 if (file.isFile() && !file.getName().equals("key.bin")) {
                     if (async) {
@@ -536,17 +546,29 @@ public class Main {
                         try {
                             EncryptionFunction threadFunction = encryptionFunction.clone();
                             threadFunction.setFilePath(file.getAbsolutePath());
-                            RunFunction(threadFunction, async);
+                            RunFunction(threadFunction, true);
                         } catch (CloneNotSupportedException e) {
                             e.printStackTrace();
                         }
                     }
                     else {
                         encryptionFunction.setFilePath(file.getAbsolutePath());
-                        RunFunction(encryptionFunction, async);
+                        RunFunction(encryptionFunction, false);
                     }
                 }
             }
+
+            if (async) {
+                executor.shutdown();
+                try {
+                    executor.awaitTermination(2, TimeUnit.MINUTES);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            long duration = System.currentTimeMillis() - startTime;
+            System.out.println("Total duration: " + duration);
         }
 
     }
@@ -560,7 +582,8 @@ public class Main {
             encryptionFunction.run();
         else {
             Thread t = new Thread(encryptionFunction);
-            t.start();
+            t.setName(encryptionFunction.getFilePath().substring(encryptionFunction.getFilePath().lastIndexOf("\\")));
+            executor.execute(t);
         }
     }
 
@@ -610,21 +633,21 @@ public class Main {
         return null;
     }
 
-    private static Queue<Key> PrepareKeysQueue(ChoiceEnum choice, String fileDirectory) throws IOException, ClassNotFoundException {
+    private static Deque<Key> PrepareKeysQueue(ChoiceEnum choice, String fileDirectory) throws IOException, ClassNotFoundException {
         File keyFile = new File(fileDirectory + "\\key.bin");
         switch (choice) {
             case ENCRYPT:
                 return new ArrayDeque<>();
             case DECRYPT:
                 ObjectInputStream keyReader = new ObjectInputStream(new FileInputStream(keyFile));
-                @SuppressWarnings("unchecked") Queue<Key> keys = (Queue<Key>) keyReader.readObject();
+                @SuppressWarnings("unchecked") Deque<Key> keys = (Deque<Key>) keyReader.readObject();
                 keyReader.close();
                 return keys;
         }
         return null;
     }
 
-    private static void FinishKeysQueue(ChoiceEnum choice, String fileDirectory, Queue<Key> keys) throws IOException {
+    private static void FinishKeysQueue(ChoiceEnum choice, String fileDirectory, Deque<Key> keys) throws IOException {
         File keyFile = new File(fileDirectory + "\\key.bin");
         switch (choice) {
             case ENCRYPT:

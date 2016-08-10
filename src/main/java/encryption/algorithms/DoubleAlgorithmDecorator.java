@@ -35,6 +35,17 @@ public class DoubleAlgorithmDecorator extends ObservableEncryptionAlgorithmDecor
         this.secondAlgorithm = secondAlgorithm;
     }
 
+    @Override
+    public DoubleAlgorithmDecorator clone() throws CloneNotSupportedException {
+        try {
+            DoubleAlgorithmDecorator result = (DoubleAlgorithmDecorator) super.clone();
+            result.secondAlgorithm = secondAlgorithm.clone();
+            return result;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Can't happen
+        }
+    }
+
     public void init() throws EncryptionException{
         super.init();
         secondAlgorithm.init();

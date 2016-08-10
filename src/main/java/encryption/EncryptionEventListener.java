@@ -34,7 +34,7 @@ public class EncryptionEventListener extends ObservableFunctionSubscriber {
             print("Starting encryption/decryption function")
             start counting the time
          */
-        System.out.println("Starting encryption/decryption function");
+        System.out.println("Starting encryption/decryption function : " + Thread.currentThread().getName());
         this.startTime = clock.instant().toEpochMilli();
     }
 
@@ -49,6 +49,6 @@ public class EncryptionEventListener extends ObservableFunctionSubscriber {
 
         long estimatedTime = clock.instant().toEpochMilli() - startTime;
 
-        System.out.println("Finished encryption/decryption function - time: " + estimatedTime);
+        System.out.println("Finished encryption/decryption function - time: " + estimatedTime + " : " + Thread.currentThread().getName());
     }
 }

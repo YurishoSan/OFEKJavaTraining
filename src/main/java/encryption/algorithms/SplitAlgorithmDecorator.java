@@ -33,6 +33,17 @@ public class SplitAlgorithmDecorator extends ObservableEncryptionAlgorithmDecora
         this.secondAlgorithm = secondAlgorithm;
     }
 
+    @Override
+    public SplitAlgorithmDecorator clone() throws CloneNotSupportedException {
+        try {
+            SplitAlgorithmDecorator result = (SplitAlgorithmDecorator) super.clone();
+            result.secondAlgorithm = secondAlgorithm.clone();
+            return result;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Can't happen
+        }
+    }
+
     public void init() throws EncryptionException {
         super.init();
         secondAlgorithm.init();
