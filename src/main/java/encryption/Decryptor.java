@@ -13,7 +13,7 @@ import java.util.List;
  * Preforms decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 5.0
+ * @version 5.1
  */
 @EqualsAndHashCode(callSuper = true)
 @Data public class Decryptor extends EncryptionFunction{
@@ -23,6 +23,15 @@ import java.util.List;
      */
     public Decryptor() {
         super();
+    }
+
+    @Override
+    public Decryptor clone() {
+        try {
+            return (Decryptor) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Can't happen
+        }
     }
 
     /**
@@ -51,9 +60,10 @@ import java.util.List;
                 setFilePath("")
          */
         super.setFilePath(value);
-        if (!(getFilePath() != null && getFilePath().contains(".")) || // if has no extension
+        if (!getBatchMode())
+            if (!(getFilePath() != null && getFilePath().contains(".")) || // if has no extension
                 !(getFilePath().substring(getFilePath().lastIndexOf(".")).equals(".encrypted"))) // or extension is not ".encrypted"
-            super.setFilePath("");
+                super.setFilePath("");
     }
 
     /**
@@ -62,6 +72,9 @@ import java.util.List;
      */
     @Override
     protected String getInputFileName() {
+        if (getBatchMode())
+            return getFilePath().substring(0, getFilePath().lastIndexOf("\\")) + "\\encrypted\\" + getFilePath().substring(getFilePath().lastIndexOf("\\") + 1);
+
         return getFilePath();
     }
 
@@ -72,23 +85,23 @@ import java.util.List;
     @Override
     protected String getOutputFileName() {
         if (getBatchMode())
-            return getFilePath().substring(0, getFilePath().lastIndexOf("\\")) + "\\decrypted" + getFilePath().substring(getFilePath().lastIndexOf("\\")+1);
-        else {
-            String originalFilePath;
-            String testFilePathWOExtension;
-            String testFilePathExtension;
+            return getFilePath().substring(0, getFilePath().lastIndexOf("\\")) + "\\decrypted\\" + getFilePath().substring(getFilePath().lastIndexOf("\\") + 1);
 
-            //get file names
-            originalFilePath = getFilePath().substring(0, getFilePath().lastIndexOf('.')); // remove '.encrypted', duo to setFilePath override, there must be a '.encrypted'
-            if (getFilePath() != null && getFilePath().contains(".")) { // if there is an extension
-                testFilePathWOExtension = originalFilePath.substring(0, originalFilePath.lastIndexOf('.'));
-                testFilePathExtension = originalFilePath.substring(originalFilePath.lastIndexOf("."));
-            } else { //no extension
-                testFilePathWOExtension = originalFilePath;
-                testFilePathExtension = "";
-            }
+        String originalFilePath;
+        String testFilePathWOExtension;
+        String testFilePathExtension;
 
-            return testFilePathWOExtension + "_decrypted" + testFilePathExtension;
+        //get file names
+        originalFilePath = getFilePath().substring(0, getFilePath().lastIndexOf('.')); // remove '.encrypted', duo to setFilePath override, there must be a '.encrypted'
+        if (getFilePath() != null && getFilePath().contains(".")) { // if there is an extension
+            testFilePathWOExtension = originalFilePath.substring(0, originalFilePath.lastIndexOf('.'));
+            testFilePathExtension = originalFilePath.substring(originalFilePath.lastIndexOf("."));
+        } else { //no extension
+            testFilePathWOExtension = originalFilePath;
+            testFilePathExtension = "";
         }
+
+        return testFilePathWOExtension + "_decrypted" + testFilePathExtension;
+
     }
 }

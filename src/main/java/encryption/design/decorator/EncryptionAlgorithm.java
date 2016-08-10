@@ -13,9 +13,12 @@ import java.util.function.Function;
  * Encryption/Decryption function's algorithm Decorator pattern interface
  *
  * @author Yitzhak Goldstein
- * @version 2.0
+ * @version 2.1
  */
 public interface EncryptionAlgorithm {
+
+    EncryptionAlgorithm clone() throws CloneNotSupportedException;
+
     /**
      * prepare for running the algorithm. must be ran once before algorithm() or step()
      */

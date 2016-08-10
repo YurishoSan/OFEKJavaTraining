@@ -20,15 +20,26 @@ import java.util.function.Function;
  * also observable using encryption.design.observer.ObservableFunctionSubscriber
  *
  * @author Yitzhak Goldstein
- * @version 3.0
+ * @version 3.1
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class ObservableEncryptionAlgorithmDecorator extends ObservableFunction implements EncryptionAlgorithm {
+public abstract class ObservableEncryptionAlgorithmDecorator extends ObservableFunction implements EncryptionAlgorithm, Cloneable {
     protected EncryptionAlgorithm decoratedEncryptionAlgorithm;
 
     public ObservableEncryptionAlgorithmDecorator(EncryptionAlgorithm decoratedEncryptionAlgorithm) {
         setDecoratedEncryptionAlgorithm(decoratedEncryptionAlgorithm);
+    }
+
+    @Override
+    public ObservableEncryptionAlgorithmDecorator clone() throws CloneNotSupportedException {
+        try {
+            ObservableEncryptionAlgorithmDecorator result = (ObservableEncryptionAlgorithmDecorator) super.clone();
+            result.setDecoratedEncryptionAlgorithm(decoratedEncryptionAlgorithm.clone());
+            return result;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Can't happen
+        }
     }
 
     @Override
@@ -80,5 +91,4 @@ public abstract class ObservableEncryptionAlgorithmDecorator extends ObservableF
     public List<Pair<Function<Pair<Character, Integer>, Integer>, Character>> getSteps() {
         return decoratedEncryptionAlgorithm.getSteps();
     }
-
 }

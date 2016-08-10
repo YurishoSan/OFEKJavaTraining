@@ -20,9 +20,9 @@ import utils.FileUtils;
  * Abstract encryption function.
  *
  * @author Yitzhak Goldstein
- * @version 5.1
+ * @version 5.2
  */
-@Data public abstract class EncryptionFunction implements Runnable {
+@Data public abstract class EncryptionFunction implements Runnable, Cloneable {
     // Constants -------------------------------------------------------------------------------------------------------
     public static final int BYTE_MAX_VALUE = 255;
 
@@ -47,6 +47,17 @@ import utils.FileUtils;
         setFilePath("");
         setAlgorithm(new NoneEncryptionAlgorithmDecorator(new BasicAlgorithm(), (char)0));
         setBatchMode(false);
+    }
+
+    @Override
+    public EncryptionFunction clone() throws CloneNotSupportedException{
+        try {
+            EncryptionFunction result = (EncryptionFunction) super.clone();
+            result.setAlgorithm(algorithm.clone());
+            return result;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Can't happen
+        }
     }
 
     /**
@@ -110,6 +121,10 @@ import utils.FileUtils;
         try {
             inputFile = new File(getInputFileName());
             outputFile = new File(getOutputFileName());
+
+            File parentDir = outputFile.getParentFile();
+            if(! parentDir.exists())
+                parentDir.mkdirs();
 
             algorithm.setInputFile(inputFile);
             algorithm.setOutputFile(outputFile);

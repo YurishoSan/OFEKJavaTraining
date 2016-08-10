@@ -13,7 +13,7 @@ import java.util.List;
  * See: http://www.journaldev.com/1739/observer-design-pattern-in-java
  */
 @Data
-public class ObservableFunction implements Observable {
+public class ObservableFunction implements Observable, Cloneable {
     private List<Observer> observersStart;
     private List<Observer> observersEnd;
 
@@ -22,6 +22,27 @@ public class ObservableFunction implements Observable {
     public ObservableFunction() {
         observersStart = new ArrayList<Observer>();
         observersEnd = new ArrayList<Observer>();
+    }
+
+    @Override
+    public ObservableFunction clone() throws CloneNotSupportedException {
+        try {
+            ObservableFunction result = (ObservableFunction) super.clone();
+
+            ArrayList<Observer> observersStart = new ArrayList<>();
+            for (Observer observer : this.observersStart)
+                observersStart.add(observer.clone());
+            result.setObserversStart(observersStart);
+
+            ArrayList<Observer> observersEnd = new ArrayList<>();
+            for (Observer observer : this.observersEnd)
+                observersEnd.add(observer.clone());
+            result.setObserversEnd(observersEnd);
+
+            return result;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); //can't happen
+        }
     }
 
     public void register(Observer obj, EventTypesEnum eventType) {

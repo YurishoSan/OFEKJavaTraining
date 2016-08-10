@@ -19,6 +19,15 @@ public class EncryptionEventListener extends ObservableFunctionSubscriber {
         this.clock = clock;
     }
 
+    @Override
+    public EncryptionEventListener clone() throws CloneNotSupportedException {
+        try {
+            return (EncryptionEventListener) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); //can't happen
+        }
+    }
+
     public void startEvent() {
         /*
         startEvent pseudo code

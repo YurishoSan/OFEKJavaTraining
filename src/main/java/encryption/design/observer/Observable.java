@@ -9,6 +9,7 @@ import encryption.exception.EndEventCalledBeforeStartEventException;
  * See: http://www.journaldev.com/1739/observer-design-pattern-in-java
  */
 public interface Observable {
+    Observable clone() throws CloneNotSupportedException;
 
     //methods to register and unregister observers
     void register(Observer obj, EventTypesEnum eventType);

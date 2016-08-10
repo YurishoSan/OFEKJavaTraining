@@ -9,6 +9,8 @@ import encryption.exception.EndEventCalledBeforeStartEventException;
  */
 public interface Observer {
 
+    Observer clone() throws CloneNotSupportedException;
+
     //method to update the observer, used by subject
     void update(EventTypesEnum eventType) throws EndEventCalledBeforeStartEventException;
 

@@ -18,10 +18,10 @@ import java.util.function.Function;
  *
  * basic algorithm all others decorate
  *
- * @version 2.0
+ * @version 2.1
  */
 @Data
-public class BasicAlgorithm implements EncryptionAlgorithm {
+public class BasicAlgorithm implements EncryptionAlgorithm, Cloneable {
     /**
      * file to apply the algorithm to
      */
@@ -43,6 +43,19 @@ public class BasicAlgorithm implements EncryptionAlgorithm {
     public BasicAlgorithm() {
         steps = new ArrayList<>();
         addStep(new Pair<>(val -> (val.getValue()), (char)0));
+    }
+
+    @Override
+    public BasicAlgorithm clone() throws CloneNotSupportedException {
+        try {
+            BasicAlgorithm result = (BasicAlgorithm) super.clone();
+            List<Pair<Function<Pair<Character, Integer>, Integer>, Character>> steps = new ArrayList<>();
+            steps.addAll(this.steps); // the actual steps are unmutable so this is fine
+            result.setSteps(steps);
+            return result;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Can't happen
+        }
     }
 
     /**

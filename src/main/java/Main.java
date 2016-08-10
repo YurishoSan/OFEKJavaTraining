@@ -2,6 +2,7 @@ import encryption.*;
 import encryption.algorithms.*;
 import encryption.algorithms.BasicAlgorithm;
 import encryption.design.observer.EventTypesEnum;
+import utils.FileUtils;
 
 import java.io.*;
 import java.time.Clock;
@@ -13,7 +14,7 @@ import java.util.*;
  * Preforms encryption and decryption of files.
  *
  * @author Yitzhak Goldstein
- * @version 5.0
+ * @version 5.1
  */
 public class Main {
     // Enums -----------------------------------------------------------------------------------------------------------
@@ -64,7 +65,7 @@ public class Main {
      * @since 1.0
      * @return User's chosen action from the menu
      */
-    public static ChoiceEnum SelectionMenu() {
+    private static ChoiceEnum SelectionMenu() {
         /*
         SelectionMenu pseudo code
             do
@@ -110,7 +111,7 @@ public class Main {
      *
      * @since 1.1
      */
-    public static void SetFilePath(EncryptionFunction encryptionFunction) {
+    private static void SetFilePath(EncryptionFunction encryptionFunction) {
         /*
         SetFilePath pseudo code
             do
@@ -142,6 +143,20 @@ public class Main {
         } while (encryptionFunction.getFilePath().equals(""));
     }
 
+    private static String GetDirectory() {
+        String directoryPath; //path of directory to get from user
+        File directory;
+        Scanner reader = new Scanner(System.in); // input reader
+
+        do {
+            System.out.println("Enter Directory Path:");
+            directoryPath = reader.nextLine();
+            directory = new File(directoryPath);
+        } while (!FileUtils.isFilenameValid(directoryPath) || !directory.exists() || !directory.isDirectory());
+
+        return directoryPath;
+    }
+
     private static char SetKey(Queue<Key> keys) {
         /* SetKey pseudo code
             key <- Random()
@@ -149,7 +164,7 @@ public class Main {
             return key
          */
         Random rnd = new Random();
-        char key = 0;
+        char key;
 
         key = (char)rnd.nextInt(EncryptionFunction.BYTE_MAX_VALUE+1);
         System.out.println("key: " + (int)key);
@@ -378,7 +393,7 @@ public class Main {
      * @since 1.0
      */
     @SuppressWarnings("SpellCheckingInspection")
-    public static void pauseProg(){
+    private static void pauseProg(){
         System.out.println("Press enter to continue...");
         Scanner keyboard = new Scanner(System.in);
         keyboard.nextLine();
@@ -398,18 +413,32 @@ public class Main {
                     DoSingleFile(choice)
                     break;
                 case SYNC:
-                    DoSync(choice)
+                    DoDirectory(choice, false)
                     break;
                 case ASYNC:
-                    DoAsync(choice)
+                    DoDirectory(choice, true)
                     break;
 
 
         */
         PrintCredits();
 
+        ModeEnum mode = SelectMode();
         ChoiceEnum choice = SelectionMenu();
-        DoSingleFile(choice);
+
+        if (mode != null) {
+            switch (mode) {
+                case SINGLE:
+                    DoSingleFile(choice);
+                    break;
+                case SYNC:
+                    DoDirectory(choice, false);
+                    break;
+                case ASYNC:
+                    DoDirectory(choice, true);
+                    break;
+            }
+        }
 
         pauseProg();
     }
@@ -448,21 +477,17 @@ public class Main {
 
         SetFilePath(encryptionFunction);
         try {
-            Queue<Key> keys = PrepareKeysQueue(choice, encryptionFunction.getFilePath());
+            Queue<Key> keys = PrepareKeysQueue(choice, encryptionFunction.getFilePath().substring(0, encryptionFunction.getFilePath().lastIndexOf('\\')));
             encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
-            FinishKeysQueue(choice, encryptionFunction.getFilePath(), keys);
+            FinishKeysQueue(choice,encryptionFunction.getFilePath().substring(0, encryptionFunction.getFilePath().lastIndexOf('\\')), keys);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        EncryptionEventListener encryptionEventListener = new EncryptionEventListener(Clock.systemUTC());
-        encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_START);
-        encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_END);
-
-        encryptionFunction.run();
+        RunFunction(encryptionFunction, false);
     }
 
-    private static void DoSync(ChoiceEnum choice) {
+    private static void DoDirectory(ChoiceEnum choice, boolean async) {
         /* DoSync pseudo code
             directory <- setDirectory()
 
@@ -478,32 +503,74 @@ public class Main {
                     and in case of exception print exception info
          */
 
+        EncryptionFunction encryptionFunction = null; // object for encryption function to preform
+
+        switch (choice) {
+            case ENCRYPT:
+                encryptionFunction = new Encryptor();
+                break;
+            case DECRYPT:
+                encryptionFunction = new Decryptor();
+                break;
+        }
+
+        encryptionFunction.setBatchMode(true);
+
+        String directory = GetDirectory();
+
+        try {
+            Queue<Key> keys = PrepareKeysQueue(choice, directory);
+            encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
+            FinishKeysQueue(choice,directory, keys);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        File folder = new File(directory);
+        File[] listOfFiles = folder.listFiles();
+        if (listOfFiles != null) {
+            for (File file : listOfFiles) {
+                if (file.isFile() && !file.getName().equals("key.bin")) {
+                    if (async) {
+                        //create different encryptionFunctions for different threads
+                        try {
+                            EncryptionFunction threadFunction = encryptionFunction.clone();
+                            threadFunction.setFilePath(file.getAbsolutePath());
+                            RunFunction(threadFunction, async);
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        encryptionFunction.setFilePath(file.getAbsolutePath());
+                        RunFunction(encryptionFunction, async);
+                    }
+                }
+            }
+        }
+
     }
 
-    private static void DoAsync(ChoiceEnum choice) {
-        /* DoSync pseudo code
-            directory <- setDirectory()
+    private static void RunFunction(EncryptionFunction encryptionFunction, boolean async) {
+        EncryptionEventListener encryptionEventListener = new EncryptionEventListener(Clock.systemUTC());
+        encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_START);
+        encryptionFunction.getAlgorithm().register(encryptionEventListener, EventTypesEnum.FUNCTION_END);
 
-            keys = PrepareKeysQueue(choice, filePath);
-            encryptionFunction.setAlgorithm(GetAlgorithm(choice, keys));
-            FinishKeysQueue(choice, filePath, keys);
-
-            for each file in directory and not sub directories
-                encryptionFunction.setFilePath(file.name)
-
-                add event listeners
-                try run new thread using decoratedEncryptionFunction.run(),
-                    and in case of exception print exception info
-         */
+        if (!async)
+            encryptionFunction.run();
+        else {
+            Thread t = new Thread(encryptionFunction);
+            t.start();
+        }
     }
 
     private static ModeEnum SelectMode() {
         /* ModeEnum pseudo code
             do
                 print("Please select mode:
-                    [1] Single [F]ile
-                    [2] Directory - [S]ync
-                    [3] Directory - [A]sync
+                    1) Single [F]ile
+                    2) Directory - [S]ync
+                    3) Directory - [A]sync
                 ")
 
                 mode <- input ()
@@ -511,24 +578,54 @@ public class Main {
 
             return mode
          */
+        char choice;
+        Scanner reader; // input reader
+        do {
+            System.out.println("Please select mode:");
+            System.out.println("\t1) Single [F]ile");
+            System.out.println("\t2) Directory - [S]ync");
+            System.out.println("\t3) Directory - [A]sync");
+
+            reader = new Scanner(System.in);
+            choice = reader.next().charAt(0);
+        } while ((choice < '1' || choice > '3')&&
+                choice != 'F' && choice != 'S' && choice != 'A' &&
+                choice != 'f' && choice != 's' && choice != 'a');
+
+        switch (choice) {
+            case '1':
+            case 'F':
+            case 'f':
+                return ModeEnum.SINGLE;
+            case '2':
+            case 'S':
+            case 's':
+                return ModeEnum.SYNC;
+            case '3':
+            case 'A':
+            case 'a':
+                return  ModeEnum.ASYNC;
+        }
+
+        return null;
     }
 
-    private static Queue<Key> PrepareKeysQueue(ChoiceEnum choice, String filePath) throws IOException, ClassNotFoundException {
-        File keyFile = new File(filePath.substring(0, filePath.lastIndexOf('\\'))+ "\\key.bin");
+    private static Queue<Key> PrepareKeysQueue(ChoiceEnum choice, String fileDirectory) throws IOException, ClassNotFoundException {
+        File keyFile = new File(fileDirectory + "\\key.bin");
         switch (choice) {
             case ENCRYPT:
                 return new ArrayDeque<>();
             case DECRYPT:
                 ObjectInputStream keyReader = new ObjectInputStream(new FileInputStream(keyFile));
-                Queue<Key> keys = (Queue<Key>) keyReader.readObject();
+                @SuppressWarnings("unchecked") Queue<Key> keys = (Queue<Key>) keyReader.readObject();
                 keyReader.close();
                 return keys;
         }
         return null;
     }
 
-    private static void FinishKeysQueue(ChoiceEnum choice, String filePath, Queue<Key> keys) throws IOException {
-        File keyFile = new File(filePath.substring(0, filePath.lastIndexOf('\\'))+ "\\key.bin");
+    private static void FinishKeysQueue(ChoiceEnum choice, String fileDirectory, Queue<Key> keys) throws IOException {
+        File keyFile = new File(fileDirectory + "\\key.bin");
         switch (choice) {
             case ENCRYPT:
                 if (!keyFile.exists())

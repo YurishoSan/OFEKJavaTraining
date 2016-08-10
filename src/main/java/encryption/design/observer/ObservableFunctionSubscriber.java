@@ -7,8 +7,19 @@ import encryption.exception.EndEventCalledBeforeStartEventException;
  *
  * See: http://www.journaldev.com/1739/observer-design-pattern-in-java
  */
-public abstract class ObservableFunctionSubscriber implements Observer {
+public abstract class ObservableFunctionSubscriber implements Observer, Cloneable {
     private Observable observable;
+
+    @Override
+    public ObservableFunctionSubscriber clone() throws CloneNotSupportedException {
+        try {
+            ObservableFunctionSubscriber result = (ObservableFunctionSubscriber) super.clone();
+            result.setObservable(observable.clone());
+            return result;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); //can't happen
+        }
+    }
 
     public final void update(EventTypesEnum eventType) throws EndEventCalledBeforeStartEventException {
         switch(eventType) {
